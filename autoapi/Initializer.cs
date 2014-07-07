@@ -111,18 +111,19 @@ namespace zeco.autoapi
                 .Where(sig => sig.UserType != null);
         }
 
-        private static Type GetUserType(Type t)
+        private static Type GetUserType(Type type)
         {
-            if (! typeof (DbContext).IsAssignableFrom(t))
+            if (! typeof (DbContext).IsAssignableFrom(type))
                 return null;
 
             do
             {
-                if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof (AutoApiDbContext<>))
-                    return t.GetGenericArguments()[0];
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof (AutoApiDbContext<>))
+                    return type.GetGenericArguments()[0];
 
-                t = t.BaseType;
-            } while (t != null);
+                type = type.BaseType;
+
+            } while (type != null);
 
             return null;
         }
