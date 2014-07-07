@@ -135,7 +135,7 @@
     <Compile Include="Json\JsObjectBase.cs" />
     <Compile Include="Json\JsonContractResolver.cs" />
     <Compile Include="Json\JsonNamingConvention.cs" />
-    <Compile Include="Initializer.cs" />
+    <Compile Include="AutoApiCodeGenerator.cs" />
     <Compile Include="MVC\Fitlers\DebugExceptionHandlerAttribute.cs" />
     <Compile Include="Providers\ConcurrentGuidProvider.cs" />
     <Compile Include="Providers\SecureUniqueAccessTokenProvider.cs" />

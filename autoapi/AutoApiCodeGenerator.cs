@@ -9,7 +9,7 @@ using zeco.autoapi.Extensions;
 
 namespace zeco.autoapi
 {
-    static class Initializer
+    static class AutoApiCodeGenerator
     {
         private class DbContextTypeInformation
         {
@@ -82,7 +82,7 @@ namespace zeco.autoapi
 
             var mname = ObjectExtensions.NameOf(n => GenScripts<AutoApiDbContext<AutoApiUser>, AutoApiUser>(null));
 
-            var method = typeof (Initializer).GetMethod(mname, BindingFlags.NonPublic | BindingFlags.Static);
+            var method = typeof (AutoApiCodeGenerator).GetMethod(mname, BindingFlags.NonPublic | BindingFlags.Static);
 
             foreach (var context in contexts)
             {
