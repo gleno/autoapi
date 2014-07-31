@@ -84,7 +84,7 @@ namespace zeco.autoapi.CodeGeneration
 
                 foreach (var @enum in enums)
                 {
-                    Scope(string.Format("declare enum {0}", @enum.Name), () =>
+                    Scope(string.Format("enum {0}", @enum.Name), () =>
                     {
                         var values = @enum.GetEnumValues();
                         var names = @enum.GetEnumNames();

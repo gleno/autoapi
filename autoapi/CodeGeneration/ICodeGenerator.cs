@@ -1,6 +1,6 @@
 ﻿namespace zeco.autoapi.CodeGeneration
 {
-    public interface ICodeGenerator
+    interface ICodeGenerator
     {
         #region Public Properties
 

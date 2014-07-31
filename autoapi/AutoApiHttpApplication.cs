@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -14,7 +13,6 @@ using System.Web.Routing;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using zeco.autoapi.CodeGeneration;
 using zeco.autoapi.DependencyInjection;
 using zeco.autoapi.Extensions;
 using zeco.autoapi.Json;

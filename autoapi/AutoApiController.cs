@@ -55,7 +55,7 @@ namespace zeco.autoapi
             }
         }
 
-        internal ApiControllerBase() { }
+        //internal ApiControllerBase() { }
     }
 
     [Authorize]
