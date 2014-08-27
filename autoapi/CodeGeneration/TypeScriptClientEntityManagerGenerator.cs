@@ -158,15 +158,15 @@ namespace zeco.autoapi.CodeGeneration
 
                 }
 
-                function updater<Q>(promise: ng.IHttpPromise<Q>, process: (item: Q) => Q) {
+                function updater<Q>(promise: ng.IPromise<{data:Q}>, process: (item: Q) => Q) {
                     $rootScope.$broadcast('updating');
 
                     var defer = $q.defer<Q>();
 
-                    promise.success((item: Q) => {
-                        defer.resolve(process(item));
+                    promise.then((result) => {
+                        defer.resolve(process(result.data));
                         $rootScope.$broadcast('updated');
-                    }).error(error);
+                    }).catch(error);
 
                     return defer.promise;
                 }
@@ -204,6 +204,12 @@ namespace zeco.autoapi.CodeGeneration
                     }
 
                     function update(idset) {
+
+                        if (!idset.length) {
+                            var dud = $q.defer();
+                            dud.resolve([]);
+                            return updater(dud.promise, process);                            
+                        }
 
                         var task = $http({
                             method: 'PATCH',

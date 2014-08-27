@@ -159,7 +159,8 @@
     <Compile Include="Json\JsonNamingConvention.cs" />
     <Compile Include="AutoApiCodeGenerator.cs" />
     <Compile Include="MVC\Fitlers\DebugExceptionHandlerAttribute.cs" />
-    <Compile Include="MVC\RazorExtensions.cs" />
+    <Compile Include="MVC\FileInclusion.cs" />
+    <Compile Include="MVC\RazorUtilities.cs" />
     <Compile Include="Providers\ConcurrentGuidProvider.cs" />
     <Compile Include="Providers\SecureUniqueAccessTokenProvider.cs" />
     <Compile Include="Providers\ThreadLocalRandomProvider.cs" />
