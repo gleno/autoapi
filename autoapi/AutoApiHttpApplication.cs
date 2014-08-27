@@ -209,6 +209,7 @@ namespace zeco.autoapi
 
         private void SetupApplicationInternal(HttpConfiguration configuration)
         {
+            SetupHeaders();
             SetupFilters(configuration);
             SetupApiFormatters(configuration);
             SetupIgnoreRoutes();
@@ -220,6 +221,11 @@ namespace zeco.autoapi
             _installer.AddInstaller(SetupControllerInjector);
 
             SetupCustomControllerFactory(configuration);
+        }
+
+        private void SetupHeaders()
+        {
+            MvcHandler.DisableMvcResponseHeader = true;
         }
 
         private void SetupFilters(HttpConfiguration configuration)

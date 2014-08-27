@@ -33,6 +33,7 @@ namespace zeco.autoapi.CodeGeneration
                 });
 
                 Scope("export module factories", () =>
+                {
                     Scope("export function data(entityService:IEntityService) : IDataService", () =>
                     {
 
@@ -56,7 +57,10 @@ namespace zeco.autoapi.CodeGeneration
                         JObject("service", dict);
 
                         Return("service");
-                    }));
+                    });
+
+                    Statement("data.$inject=['entityService'];");
+                });
             });
         }
 

@@ -4,8 +4,6 @@ using zeco.autoapi.Extensions;
 namespace zeco.autoapi.Providers
 {
 
-
-
     public class SecureUniqueAccessTokenProvider : IUniqueAccessTokenProvider
     {
         public IGuidProvider GuidProvider { get; set; }

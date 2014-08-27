@@ -61,7 +61,7 @@ namespace zeco.autoapi.CodeGeneration
 
             if (compilerResults.Errors.Count > 0)
             {
-                throw new Exception(compilerResults.Errors[0].ToString());
+                throw new Exception("Error");
             }
 
             return compilerResults.CompiledAssembly;

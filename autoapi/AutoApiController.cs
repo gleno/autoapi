@@ -98,7 +98,7 @@ namespace zeco.autoapi
         }
 
         [HttpPost]
-        public virtual bool Post(dynamic payload)
+        public virtual T Post(dynamic payload)
         {
             var id = Guid.Parse((string) payload.id);
 
@@ -107,10 +107,11 @@ namespace zeco.autoapi
                 var item = Get(id);
                 TranscribeFromPayload(item, payload);
                 Context.SaveChanges();
-                return true;
+                return item;
             }
 
-            return false;
+            throw new HttpResponseException(HttpStatusCode.Forbidden);
+
         }
 
         [HttpPut]

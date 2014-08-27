@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace zeco.autoapi.Providers
 {
-    internal static class ThreadLocalRandomProvider
+    public static class ThreadLocalRandomProvider
     {
         /// <summary> 
         /// Random number generator used to generate seeds, 

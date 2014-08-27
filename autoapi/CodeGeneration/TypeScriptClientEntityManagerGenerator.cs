@@ -242,7 +242,10 @@ namespace zeco.autoapi.CodeGeneration
                 }
 
                 function post(entity: T): ng.IPromise<any> {
-                    return $http.post(url, entity).error(error);
+                    return $http.post(url, entity).success((e:T) => {
+                        //register(e, false); <- Causes problems with dirty fields
+                        $rootScope.$broadcast('modified');
+                    }).error(error);
                 }
 
                 function del(id: string, sourceId: string = null): ng.IPromise<void> {
@@ -288,6 +291,8 @@ namespace zeco.autoapi.CodeGeneration
             return service;
 
         }
+
+        entityService.$inject = ['$http', '$rootScope', '$q'];
 
     }
 }");

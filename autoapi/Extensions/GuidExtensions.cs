@@ -2,7 +2,6 @@
 
 namespace zeco.autoapi.Extensions
 {
-
     public static class GuidExtensions
     {
         public static string AsCompactString(this Guid guid)
@@ -16,14 +15,7 @@ namespace zeco.autoapi.Extensions
 
         public static Guid Xor(this Guid a, Guid b)
         {
-            var ab = a.ToByteArray();
-            var bb = b.ToByteArray();
-
-            var result = new byte[16];
-            for (var i = 0; i < 16; i++)
-                result[i] = (byte)(ab[i] ^ bb[i]);
-
-            return new Guid(result);
+            return new Guid(a.ToByteArray().Xor(b.ToByteArray()));
         }
     }
 }
