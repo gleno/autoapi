@@ -1,24 +1,31 @@
 ﻿using System;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Web;
 using System.Web.Mvc;
+using System.Web.UI;
 
 namespace zeco.autoapi.MVC
 {
     public static class RazorUtilities
     {
+
         public class Tag : IDisposable
         {
-            readonly ViewContext _viewContext;
-            readonly string _html;
+            private readonly TextWriter _writer;
+            private readonly Action _fin;
             bool _disposed;
 
-            public Tag(ViewContext viewContext, string html)
+            public Tag(TextWriter writer, Action fin)
             {
-                _viewContext = viewContext;
-                _html = html;
+                _writer = writer;
+                _fin = fin;
             }
 
             public void Dispose()
             {
+
                 Dispose(true);
                 GC.SuppressFinalize(this);
             }
@@ -28,7 +35,7 @@ namespace zeco.autoapi.MVC
                 if (!_disposed)
                 {
                     _disposed = true;
-                    _viewContext.Writer.Write(_html);
+                    _fin();
                 }
             }
         }
@@ -40,8 +47,9 @@ namespace zeco.autoapi.MVC
 
         public static Tag InlineTemplate(this HtmlHelper htmlHelper, string name, string prefix = "/ng/")
         {
-            htmlHelper.ViewContext.Writer.Write("<script type=\"text/ng-template\" id=\"{1}{0}\">", name, prefix);
-            return new Tag(htmlHelper.ViewContext, "</script>");
+            var writer = htmlHelper.ViewContext.Writer;
+            writer.Write("<script type=\"text/ng-template\" id=\"{1}{0}\">", name, prefix);
+            return new Tag(writer, () => writer.Write("</script>"));
         }
 
         public static bool IsDebug(this HtmlHelper helper)

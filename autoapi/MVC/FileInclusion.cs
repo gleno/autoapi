@@ -2,11 +2,11 @@
 using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.Ajax.Utilities;
-using zeco.autoapi.Providers;
 
 namespace zeco.autoapi.MVC
 {
@@ -28,20 +28,18 @@ namespace zeco.autoapi.MVC
 
         public static IHtmlString InlineFile(this HtmlHelper helper, string filename)
         {
-            var names = (filename.EndsWith("*") ? ListDirectory(filename) : new[] {filename});
 
             if (helper.IsDebug())
             {
-                var random = ThreadLocalRandomProvider.Instance;
-
                 var tags = "";
-                foreach (var name in names)
-                    tags += GetLinkTags(name, random);
+                foreach (var name in GetNames(filename))
+                    tags += GetLinkTags(name);
                 return new HtmlString(tags);
             }
 
             if (!_cache.ContainsKey(filename))
             {
+                var names = GetNames(filename);
                 var tags = names.GroupBy(Extension).ToDictionary(g => GetFileType(g.Key), g =>
                 {
                     var files = g.ToArray();
@@ -68,6 +66,12 @@ namespace zeco.autoapi.MVC
 
         }
 
+        private static string[] GetNames(string filename)
+        {
+            var names = (filename.EndsWith("*") ? ListDirectory(filename) : new[] {filename});
+            return names;
+        }
+
         private static string Extension(string filename)
         {
             return filename
@@ -89,15 +93,33 @@ namespace zeco.autoapi.MVC
             return "\n";
         }
 
-        private static string GetLinkTags(string filename, Random random)
+        public static string CreateMD5(string input)
         {
+            // Use input string to calculate MD5 hash
+            var md5 = MD5.Create();
+            var inputBytes = Encoding.UTF8.GetBytes(input);
+            byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+            // Convert the byte array to hexadecimal string
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < hashBytes.Length; i++)
+            {
+                sb.Append(hashBytes[i].ToString("X2"));
+            }
+            return sb.ToString();
+        }
+
+        private static string GetLinkTags(string filename)
+        {
+            var signature = CreateMD5(LoadFile(filename).Source);
+
             switch (GetFileType(Extension(filename)))
             {
                 case SourceType.Javascript:
-                    return string.Format("<script src='/{0}?rnd={1}'></script>", filename, random.NextDouble());
+                    return string.Format("<script src='/{0}?rnd={1}'></script>", filename, signature);
 
                 case SourceType.CSS:
-                    return string.Format("<link rel='stylesheet' href='/{0}?rnd={1}'/>", filename, random.NextDouble());
+                    return string.Format("<link rel='stylesheet' href='/{0}?rnd={1}'/>", filename, signature);
 
                 default:
                     throw new NotImplementedException();

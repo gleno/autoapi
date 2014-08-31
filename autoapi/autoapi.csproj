@@ -54,7 +54,7 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AjaxMin">
+<Reference Include="AjaxMin">
       <HintPath>..\..\feelmap\FeelMap\packages\AjaxMin.5.11.5295.12309\lib\net40\AjaxMin.dll</HintPath>
     </Reference>
     <Reference Include="Castle.Core">
@@ -97,7 +97,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Helpers">
+  <Reference Include="System.Web.Helpers">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.0\lib\net45\System.Web.Helpers.dll</HintPath>
       <Private>True</Private>
     </Reference>
@@ -128,7 +128,7 @@
     <Reference Include="System.Web.WebPages.Razor">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.0\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
       <Private>True</Private>
-    </Reference>
+    </Reference>    
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -138,6 +138,7 @@
   <ItemGroup>
     <Compile Include="AutoApiController.cs" />
     <Compile Include="AutoApiHttpApplication.cs" />
+    <Compile Include="AutoHttpApplication.cs" />
     <Compile Include="CodeGeneration\AutoApiBuilder.cs" />
     <Compile Include="CodeGeneration\TypeScriptClientEntityManagerGenerator.cs" />
     <Compile Include="CodeGeneration\TypeScriptClientInterfaceGenerator.cs" />
@@ -147,6 +148,7 @@
     <Compile Include="AutoApiDbModels.cs" />
     <Compile Include="AutoApiDbIdentity.cs" />
     <Compile Include="DependencyInjection\InjectingControllerFactory.cs" />
+    <Compile Include="DependencyInjection\InjectingControllerFactoryBase.cs" />
     <Compile Include="DependencyInjection\WindsorInstaller.cs" />
     <Compile Include="Extensions\BufferExtensions.cs" />
     <Compile Include="Extensions\GuidExtensions.cs" />
