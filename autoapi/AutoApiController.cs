@@ -63,6 +63,8 @@ namespace zeco.autoapi
         where T : class, IIdentifiable, new() where TUser : AutoApiUser where TContext : AutoApiDbContext<TUser>
     {
 
+        private bool _batching;
+
         #region API
 
         [HttpGet]
@@ -115,8 +117,22 @@ namespace zeco.autoapi
         }
 
         [HttpPut]
-        public virtual T Put(dynamic payload)
+        public virtual object Put(dynamic payload)
         {
+
+            var array = payload as JArray;
+            if (array != null)
+            {
+                _batching = true;
+                var list = new List<object>();
+                foreach (dynamic item in array)
+                    list.Add(Put(item));
+
+                _batching = false;
+                Context.SaveChanges();
+                return list.ToArray();
+            }
+
             Guid? sourceId = null;
             if (((IDictionary<string, JToken>) payload).ContainsKey(JsSourceIdPropertyName))
                 sourceId = Guid.Parse((string) payload.sourceId);
@@ -132,7 +148,7 @@ namespace zeco.autoapi
 
                 TranscribeFromPayload(item, payload);
                 Context.Set<T>().Add(item);
-                Context.SaveChanges();
+                if (!_batching) Context.SaveChanges();
                 return item;
             }
 

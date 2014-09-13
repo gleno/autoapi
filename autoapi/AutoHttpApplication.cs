@@ -11,7 +11,6 @@ using System.Web.Http;
 using System.Web.Http.Dispatcher;
 using System.Web.Mvc;
 using System.Web.Routing;
-using System.Web.UI;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
@@ -122,7 +121,6 @@ namespace zeco.autoapi
 
         }
 
-
         private string GetControllerName<TController>() where TController : Controller
         {
             var type = typeof(TController);
@@ -155,7 +153,7 @@ namespace zeco.autoapi
 
         private void AssertActionIsValid<TController>(string name)
         {
-            var controllerType = typeof(TController);
+            var controllerType = typeof (TController);
 
             var matchingActions = controllerType
                 .GetMethods(BindingFlags.Public | BindingFlags.Instance)
@@ -173,20 +171,45 @@ namespace zeco.autoapi
 
             if (matchingActionCount > 1)
             {
-                const string fmt = "The action '{0}' is not unique on '{1}'.";
-                var error = string.Format(fmt, name, ControllerClassNameSuffix);
-                throw new NotSupportedException(error);
+                var methods = new[]
+                {
+                    typeof (System.Web.Mvc.HttpGetAttribute),
+                    typeof (System.Web.Mvc.HttpPostAttribute),
+                    typeof (System.Web.Mvc.HttpPutAttribute),
+                    typeof (System.Web.Mvc.HttpPatchAttribute),
+                };
+
+                var array = matchingActions.Select(a =>
+                {
+                    var attrs = a.GetCustomAttributes().Select(aa => aa.GetType()).Intersect(methods).ToArray();
+
+                    if (attrs.Length == 0)
+                        attrs = new[] {methods[0]};
+
+                    if (attrs.Length > 1)
+                        throw new NotSupportedException("More than one HTTP method is is defined");
+
+                    return attrs[0];
+
+                }).ToArray();
+
+                if (array.Intersect(array).Count() != array.Length)
+                {
+                    const string fmt = "The action '{0}' is not unique on '{1}'.";
+                    var error = string.Format(fmt, name, ControllerClassNameSuffix);
+                    throw new NotSupportedException(error);
+                }
+
             }
 
-            if (matchingActionCount == 1)
+            foreach (var action in matchingActions)
             {
-                var matchingAction = matchingActions.Single();
-                var rt = matchingAction.ReturnType;
+                var rt = action.ReturnType;
 
-                if (rt.IsGenericType && rt.GetGenericTypeDefinition() == typeof(Task<>))
+                if (rt.IsGenericType && rt.GetGenericTypeDefinition() == typeof (Task<>))
                     rt = rt.GetGenericArguments().Single();
 
-                if (!typeof(ActionResult).IsAssignableFrom(rt))
+                if (!typeof (ActionResult).IsAssignableFrom(rt))
                 {
                     const string fmt = "The action '{0}' does not return an ActionResult.";
                     var error = string.Format(fmt, name);

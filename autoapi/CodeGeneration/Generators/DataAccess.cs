@@ -1,21 +1,14 @@
 using System;
 using System.Collections.Generic;
 
-namespace zeco.autoapi.CodeGeneration
+namespace zeco.autoapi.CodeGeneration.Generators
 {
-    class TypeScriptClientInterfaceGenerator : TypeScriptCodeGenerator
+    class DataAccess : TypeScriptCodeGenerator
     {
-
-        #region Public Properties
-
         public override string Filename
         {
             get { return "data.access.ts"; }
         }
-
-        #endregion
-
-        #region Public Methods
 
         protected override void GenerateInternal()
         {
@@ -24,9 +17,9 @@ namespace zeco.autoapi.CodeGeneration
                 Scope("export interface IDataService", () =>
                 {
 
-                    foreach (var type1 in GetDatatypes())
+                    foreach (var type in GetDatatypes())
                         Statement(string.Format("{0}: ICommunicator<{1}>;", 
-                            GetPluralName(type1), GetInterfaceName(type1)));
+                            GetPluralName(type), GetInterfaceName(type)));
 
                     Statement(string.Format("clear: () => void;"));
                     Statement(string.Format("self: () => ng.IPromise<IUser>"));
@@ -34,18 +27,27 @@ namespace zeco.autoapi.CodeGeneration
 
                 Scope("export module factories", () =>
                 {
+
+                    Function("load", () =>
+                    {
+                        Var("element", "document.getElementById(container)");
+                        If("element != null", () => Return("JSON.parse(element.innerHTML)"));
+                        Return("null");
+                    }, "container");
+
                     Scope("export function data(entityService:IEntityService) : IDataService", () =>
                     {
 
+                        Var("global", "load('__global')");
+                        Var("cache", "load('__cache') || {}");
+
+
                         foreach (var type in GetDatatypes())
-                            Var(GetPluralName(type), string.Format("new entityService.communicator<{0}>('{1}')", GetInterfaceName(type), Route(type)));
+                        {
+                            Var(GetPluralName(type), string.Format("new entityService.communicator<{0}>('{1}', {2})", GetInterfaceName(type), Route(type), "(<any>cache['" + type.FullName + "'] || {})"));
+                        }
 
-
-                        Var("self", "() => { " +
-                                    "var globdata = document.getElementById('__global').innerHTML;" +
-                                    "var global = JSON.parse(globdata);" +
-                                    "return users.get(global.userId);" +
-                                    "}");
+                        Var("self", "() => users.get(global.userId); ");
 
                         var dict = new Dictionary<string, Action>();
 
@@ -63,8 +65,6 @@ namespace zeco.autoapi.CodeGeneration
                 });
             });
         }
-
-        #endregion
 
     }
 }

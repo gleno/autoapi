@@ -5,9 +5,9 @@ using System.Linq;
 using System.Reflection;
 using zeco.autoapi.Extensions;
 
-namespace zeco.autoapi.CodeGeneration
+namespace zeco.autoapi.CodeGeneration.Generators
 {
-    class TypeScriptInterfaceGenerator : TypeScriptCodeGenerator
+    class DataGenerator : TypeScriptCodeGenerator
     {
         public override string Filename
         {
@@ -39,7 +39,6 @@ namespace zeco.autoapi.CodeGeneration
                         Statement(string.Format("{0}: {1};", "sourceId?", "string"));
 
                     });
-
 
                 var enums = new HashSet<Type>();
 
@@ -98,5 +97,4 @@ namespace zeco.autoapi.CodeGeneration
             });
         }
     }
-
 }

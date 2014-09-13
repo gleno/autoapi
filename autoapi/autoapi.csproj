@@ -141,9 +141,9 @@
     <Compile Include="AutoApiHttpApplication.cs" />
     <Compile Include="AutoHttpApplication.cs" />
     <Compile Include="CodeGeneration\AutoApiBuilder.cs" />
-    <Compile Include="CodeGeneration\TypeScriptClientEntityManagerGenerator.cs" />
-    <Compile Include="CodeGeneration\TypeScriptClientInterfaceGenerator.cs" />
-    <Compile Include="CodeGeneration\TypeScriptInterfaceGenerator.cs" />
+    <Compile Include="CodeGeneration\Generators\DataGenerator.cs" />
+    <Compile Include="CodeGeneration\Generators\DataAccess.cs" />
+    <Compile Include="CodeGeneration\Generators\EntitiesGenerator.cs" />
     <Compile Include="CodeGeneration\ICodeGenerator.cs" />
     <Compile Include="CodeGeneration\TypeScriptCodeGenerator.cs" />
     <Compile Include="AutoApiDbModels.cs" />
@@ -152,6 +152,7 @@
     <Compile Include="DependencyInjection\InjectingControllerFactoryBase.cs" />
     <Compile Include="DependencyInjection\WindsorInstaller.cs" />
     <Compile Include="Extensions\BufferExtensions.cs" />
+    <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\GuidExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
@@ -161,6 +162,7 @@
     <Compile Include="Json\JsonContractResolver.cs" />
     <Compile Include="Json\JsonNamingConvention.cs" />
     <Compile Include="AutoApiCodeGenerator.cs" />
+    <Compile Include="Json\Serializer.cs" />
     <Compile Include="MVC\Fitlers\DebugExceptionHandlerAttribute.cs" />
     <Compile Include="MVC\FileInclusion.cs" />
     <Compile Include="MVC\RazorUtilities.cs" />
