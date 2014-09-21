@@ -12,6 +12,12 @@ namespace zeco.autoapi.CodeGeneration.Generators
             Raw(string.Format(@"module {0} {{", ModuleName));
             Raw(@"
 
+            export interface IInitializationService {
+                global: any
+                cache: any
+                setGlobal(value:any);
+            }
+
              export interface IEntityScope extends ng.IScope {
                  entities: any;
                  watchers: any;
@@ -37,6 +43,33 @@ namespace zeco.autoapi.CodeGeneration.Generators
              }
           
              export module factories {
+
+                export function initialization() : IInitializationService {
+
+                    function load(container) {
+                        var element = document.getElementById(container);
+                        if (element != null) 
+                            return JSON.parse(element.innerHTML);
+                        return {};
+                    }
+
+                    var service = {
+                        global: load('__global'),
+                        cache: load('__cache'),
+                        setGlobal: function (value: any) {
+
+                            for (var key in service.global)
+                                if (service.global.hasOwnProperty(key))
+                                    delete service.global[key];
+
+                            for (var key in value)
+                                if (value.hasOwnProperty(key))
+                                    service.global[key] = value[key];
+                        }
+                    };
+
+                    return service;
+                }
           
                  function delayedUpdater(fpromise: (any) => ng.IPromise<any>, delay: number) {
                      var h1 = null;

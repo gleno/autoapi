@@ -1,10 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.UI;
 
 namespace zeco.autoapi.MVC
 {
@@ -13,21 +8,17 @@ namespace zeco.autoapi.MVC
 
         public class Tag : IDisposable
         {
-            private readonly TextWriter _writer;
-            private readonly Action _fin;
+            private readonly Action _action;
             bool _disposed;
 
-            public Tag(TextWriter writer, Action fin)
+            public Tag(Action action)
             {
-                _writer = writer;
-                _fin = fin;
+                _action = action;
             }
 
             public void Dispose()
             {
-
                 Dispose(true);
-                GC.SuppressFinalize(this);
             }
 
             protected virtual void Dispose(bool disposing)
@@ -35,7 +26,7 @@ namespace zeco.autoapi.MVC
                 if (!_disposed)
                 {
                     _disposed = true;
-                    _fin();
+                    _action();
                 }
             }
         }
@@ -49,7 +40,7 @@ namespace zeco.autoapi.MVC
         {
             var writer = htmlHelper.ViewContext.Writer;
             writer.Write("<script type=\"text/ng-template\" id=\"{1}{0}\">", name, prefix);
-            return new Tag(writer, () => writer.Write("</script>"));
+            return new Tag(() => writer.Write("</script>"));
         }
 
         public static bool IsDebug(this HtmlHelper helper)

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -39,6 +41,10 @@ namespace zeco.autoapi
 
     public abstract class AutoApiUser : IdentityUser<Guid, AutoApiUserLogin, AutoApiUserRole, AutoApiUserClaim>, IIdentifiable
     {
+
+        private static readonly ConcurrentDictionary<Guid, bool> _adminCache 
+            = new ConcurrentDictionary<Guid, bool>();
+
         public const string
             AdminRole = "Admin",
             APISelf = "api/self";
@@ -70,7 +76,7 @@ namespace zeco.autoapi
         {
             get
             {
-                return Roles.Any(r => r.AutoApiRole.Name == AdminRole);
+                return _adminCache.GetOrAdd(Id, id => Roles.Any(r => r.AutoApiRole.Name == AdminRole));
             }
         }
     }

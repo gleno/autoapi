@@ -16,6 +16,7 @@ using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using zeco.autoapi.DependencyInjection;
 using zeco.autoapi.Extensions;
+using zeco.autoapi.MVC;
 using zeco.autoapi.MVC.Fitlers;
 
 namespace zeco.autoapi
@@ -37,25 +38,25 @@ namespace zeco.autoapi
             AddRoutes<TController>(string.Empty);
         }
 
-        protected void AddRoutes<TController>(string path = null)
+        protected void AddRoutes<TController>(string url = null)
             where TController : Controller
         {
-            path = path ?? GetControllerName<TController>();
+            url = url ?? GetControllerName<TController>();
 
             var actions = GetActionNames<TController>();
             foreach (var action in actions)
             {
                 AssertActionIsValid<TController>(action);
-                var url = CreateActionUrl(action, path);
-                AddRoute<TController>(action, url);
+                var actionUrl = CreateActionUrl(action, url, false);
+                AddRoute<TController>(action, actionUrl);
             }
         }
 
-        protected void AddRoute<TController>(Expression<Action<TController>> accessor, string url = null)
+        protected void AddRoute<TController>(Expression<Action<TController>> accessor, string url = null, bool idparam = false)
             where TController : Controller
         {
             var action = GetActionName<TController>(accessor);
-            AddRoute<TController>(action);
+            AddRoute<TController>(action, url, idparam);
         }
 
         protected abstract void Start(HttpConfiguration configuration);
@@ -77,23 +78,6 @@ namespace zeco.autoapi
         protected void Session_Start(object sender, EventArgs e)
         {
 
-        }
-
-        class W : StringWriter
-        {
-            private readonly TextWriter _writer;
-
-            public W(TextWriter writer)
-            {
-                _writer = writer;
-            }
-
-            public override void Close()
-            {
-                var content = ToString();
-                _writer.Write(content);
-                _writer.Close();
-            }
         }
 
         protected void Application_BeginRequest(object sender, EventArgs e)
@@ -286,7 +270,7 @@ namespace zeco.autoapi
             return allMethods.Except(controllerPublicMethods).ToArray();
         }
 
-        private void AddRoute<TController>(string action, string url = null)
+        private void AddRoute<TController>(string action, string url = null, bool idparam = false)
             where TController : Controller
         {
             if (url == string.Empty)
@@ -306,19 +290,21 @@ namespace zeco.autoapi
 
             var controller = GetControllerName<TController>();
 
-            var routeName = string.Format("{0}+{1}", controllerName, action);
-            var parameters = new {controller, action};
-            RouteTable.Routes.MapRoute(routeName, url ?? CreateActionUrl(action, controller), parameters);
+            var routeName = string.Format("{0}+{1}+{2}", controllerName, action, url);
+            var parameters = idparam ? new {controller, action, id = UrlParameter.Optional} : (object) new {controller, action};
+
+
+            RouteTable.Routes.MapRoute(routeName, url ?? CreateActionUrl(action, controller, idparam), parameters);
         }
 
-        private string CreateActionUrl(string action, string path)
+        private string CreateActionUrl(string action, string path, bool idparam)
         {
             if (action == ControllerDefaultActionName)
                 action = string.Empty;
             if (path == string.Empty)
                 return action;
 
-            return string.Format("{0}/{1}", path, action);
+            return string.Format("{0}/{1}{2}", path, action, idparam ? "/{id}" : "");
         }
     }
 }

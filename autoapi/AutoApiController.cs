@@ -147,12 +147,17 @@ namespace zeco.autoapi
                         .SetValue(item, sourceId.Value);
 
                 TranscribeFromPayload(item, payload);
-                Context.Set<T>().Add(item);
-                if (!_batching) Context.SaveChanges();
-                return item;
+                return Put(item);
             }
 
             throw new HttpResponseException(HttpStatusCode.Forbidden);
+        }
+
+        protected virtual T Put(T item)
+        {
+            Context.Set<T>().Add(item);
+            if (!_batching) Context.SaveChanges();
+            return item;
         }
 
         [HttpDelete]

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text;
 using Newtonsoft.Json;
+using zeco.autoapi.Json;
 
 namespace zeco.autoapi.Extensions
 {
@@ -12,6 +15,17 @@ namespace zeco.autoapi.Extensions
         public static string ToJson(this object graph)
         {
             return JsonConvert.SerializeObject(graph);
+        }        
+        
+        public static string ToSafeJson(this object graph)
+        {
+
+            var builder = new StringBuilder();
+
+            using (var writer = new JsonTextWriter(new StringWriter(builder)))
+                new JsonSerializer { ContractResolver = new JsonContractResolver() }.Serialize(writer, graph);
+
+            return builder.ToString();
         }
 
         public static bool IsDebug(this object any)

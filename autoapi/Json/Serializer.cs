@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Newtonsoft.Json;
+using zeco.autoapi.Extensions;
 
 namespace zeco.autoapi.Json
 {
-    public class AutoApiObjectSerializer
+    public class AutoApiEntityCollection : IEnumerable<IIdentifiable>
     {
         private readonly List<IIdentifiable> _items = new List<IIdentifiable>();
 
@@ -22,16 +21,20 @@ namespace zeco.autoapi.Json
 
         public string Serialize()
         {
-            var builder = new StringBuilder();
-
-            var batch = _items
+            return _items
                 .GroupBy(item => item.TypeIdentity)
-                .ToDictionary(g => g.Key, g => g.ToDictionary(item => item.Id.ToString()));
+                .ToDictionary(g => g.Key, g => g.ToDictionary(item => item.Id.ToString()))
+                .ToSafeJson();
+        }
 
-            using (var writer = new JsonTextWriter(new StringWriter(builder)))
-                new JsonSerializer {ContractResolver = new JsonContractResolver()}.Serialize(writer, batch);
+        public IEnumerator<IIdentifiable> GetEnumerator()
+        {
+            return _items.GetEnumerator();
+        }
 
-            return builder.ToString();
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

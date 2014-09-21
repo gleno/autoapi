@@ -21,33 +21,22 @@ namespace zeco.autoapi.CodeGeneration.Generators
                         Statement(string.Format("{0}: ICommunicator<{1}>;", 
                             GetPluralName(type), GetInterfaceName(type)));
 
-                    Statement(string.Format("clear: () => void;"));
-                    Statement(string.Format("self: () => ng.IPromise<IUser>"));
+                    Statement("clear: () => void;");
+                    Statement("self: () => ng.IPromise<IUser>");
                 });
 
                 Scope("export module factories", () =>
                 {
-
-                    Function("load", () =>
-                    {
-                        Var("element", "document.getElementById(container)");
-                        If("element != null", () => Return("JSON.parse(element.innerHTML)"));
-                        Return("null");
-                    }, "container");
-
-                    Scope("export function data(entityService:IEntityService) : IDataService", () =>
+                    Scope("export function data(entityService:IEntityService, init:IInitializationService) : IDataService", () =>
                     {
 
-                        Var("global", "load('__global')");
-                        Var("cache", "load('__cache') || {}");
-
-
+                        Var("cache", "init.cache");
                         foreach (var type in GetDatatypes())
                         {
                             Var(GetPluralName(type), string.Format("new entityService.communicator<{0}>('{1}', {2})", GetInterfaceName(type), Route(type), "(<any>cache['" + type.FullName + "'] || {})"));
                         }
 
-                        Var("self", "() => users.get(global.userId); ");
+                        Var("self", "() => users.get(init.global.userId); ");
 
                         var dict = new Dictionary<string, Action>();
 
@@ -61,7 +50,7 @@ namespace zeco.autoapi.CodeGeneration.Generators
                         Return("service");
                     });
 
-                    Statement("data.$inject=['entityService'];");
+                    Statement("data.$inject=['entityService', 'initialization'];");
                 });
             });
         }
