@@ -238,6 +238,7 @@ namespace zeco.autoapi.MVC
                 .Where(f => !f.EndsWith(".min.js"))
                 .Where(f => !f.EndsWith(".min.css"))
                 .OrderBy(fn => !Regex.IsMatch(fn, @"_.*\..{2,4}$"))
+                .ThenBy(fn => Regex.IsMatch(fn, @"~.*\..{2,4}$"))
                 .ThenBy(fn => fn.Length)
                 .ToArray();
 
