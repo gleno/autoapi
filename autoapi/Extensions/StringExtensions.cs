@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Data.Entity.Design.PluralizationServices;
 using System.Globalization;
-using System.Text.RegularExpressions;
+using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using zeco.autoapi.Json;
@@ -13,15 +14,6 @@ namespace zeco.autoapi.Extensions
         private static readonly PluralizationService _pluralizationService = 
             PluralizationService.CreateService(CultureInfo.GetCultureInfo("en-us"));
 
-        private static readonly Regex REGEX_BETWEEN_TAGS = new Regex(@">\s+<", RegexOptions.Compiled);
-        private static readonly Regex REGEX_LINE_BREAKS = new Regex(@"\n\s+", RegexOptions.Compiled);
-
-        private static string CompactHtml(this string html)
-        {
-            html = REGEX_BETWEEN_TAGS.Replace(html, "> <");
-            html = REGEX_LINE_BREAKS.Replace(html, string.Empty);
-            return html.Trim();
-        }
 
         public static string Decapitalize(this string str)
         {
@@ -55,6 +47,19 @@ namespace zeco.autoapi.Extensions
             encoded = encoded.Replace("_", "/").Replace("-", "+");
             var buffer = Convert.FromBase64String(encoded + "==");
             return new Guid(buffer);
+        }
+
+        public static string MD5(this string input, Encoding encoding = null)
+        {
+            encoding = encoding ?? Encoding.UTF8;
+            var buffer = input.Serialize(encoding);
+            return string.Join("", System.Security.Cryptography.MD5.Create().ComputeHash(buffer).Select(hb => hb.ToString("X2")));
+        }
+
+        public static byte[] Serialize(this string input, Encoding encoding = null)
+        {
+            encoding = encoding ?? Encoding.UTF8;
+            return encoding.GetBytes(input);
         }
     }
 }

@@ -46,11 +46,11 @@ namespace zeco.autoapi.DependencyInjection
 
                 Component.For<AutoApiRoleManager>()
                     .UsingFactoryMethod(c => new AutoApiRoleManager(c.Resolve<AutoApiRoleStore>()))
-                    .LifestylePerWebRequest(),
-
-                Classes.FromAssembly(_autoApiAssembly).BasedOn<ApiController>().LifestylePerWebRequest()
-
+                    .LifestylePerWebRequest()
                 );
+
+            if(_autoApiAssembly != null)
+                _container.Register(Classes.FromAssembly(_autoApiAssembly).BasedOn<ApiController>().LifestylePerWebRequest());
 
             return this;
         }

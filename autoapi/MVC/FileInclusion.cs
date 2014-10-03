@@ -2,12 +2,12 @@
 using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.Ajax.Utilities;
+using zeco.autoapi.Extensions;
 
 namespace zeco.autoapi.MVC
 {
@@ -92,7 +92,6 @@ namespace zeco.autoapi.MVC
 
                 default:
                     return "";
-
             }
         }       
         
@@ -113,14 +112,9 @@ namespace zeco.autoapi.MVC
             return "\n";
         }
 
-        public static string Checksum(string input)
-        {
-            return string.Join("", MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(input)).Select(hb => hb.ToString("X2")));
-        }
-
         private static string GetLinkTags(string filename)
         {
-            var checksum = Checksum(LoadFile(filename).Source);
+            var file = LoadFile(filename);
 
             switch (GetFileType(Extension(filename)))
             {
@@ -129,10 +123,10 @@ namespace zeco.autoapi.MVC
                     return "";
 
                 case SourceType.Javascript:
-                    return string.Format("<script src='/{0}?rnd={1}'></script>", filename, checksum);
+                    return string.Format("<script src='/{0}?rnd={1}'></script>", filename, file.Checksum);
 
                 case SourceType.CSS:
-                    return string.Format("<link rel='stylesheet' href='/{0}?rnd={1}'/>", filename, checksum);
+                    return string.Format("<link rel='stylesheet' href='/{0}?rnd={1}'/>", filename, file.Checksum);
 
                 default:
                     throw new NotImplementedException();
@@ -173,9 +167,7 @@ namespace zeco.autoapi.MVC
 
             var source =  File.ReadAllText(GetFilePath(minfname) ?? GetFilePath(filename));
 
-            
-
-            var checksum = Checksum(source);
+            var checksum = source.MD5();
 
             return new SourceFile
             {
@@ -206,23 +198,20 @@ namespace zeco.autoapi.MVC
                     });
 
                 case SourceType.Template:
-                    return MinifyHtml(file);
+                    return MinifyHtml(file.Source);
 
 
                 default:throw new NotImplementedException();
             }
         }
 
-        private static string MinifyHtml(SourceFile file)
+        private static string MinifyHtml(string html)
         {
-            var s = file.Source;
-
-            s = Regex.Replace(s, @"(?s)\s+(?!(?:(?!</?pre\b).)*</pre>)", " ");
-            s = Regex.Replace(s, @"(?s)\s*\n\s*(?!(?:(?!</?pre\b).)*</pre>)", "\n");
-            s = Regex.Replace(s, @"(?s)\s*\>\s*\<\s*(?!(?:(?!</?pre\b).)*</pre>)", "><");
-            s = Regex.Replace(s, @"(?s)<!--((?:(?!</?pre\b).)*?)-->(?!(?:(?!</?pre\b).)*</pre>)", "");
-
-            return s;
+            html = Regex.Replace(html, @"(?s)\s+(?!(?:(?!</?pre\b).)*</pre>)", " ");
+            html = Regex.Replace(html, @"(?s)\s*\n\s*(?!(?:(?!</?pre\b).)*</pre>)", "\n");
+            html = Regex.Replace(html, @"(?s)\s*\>\s*\<\s*(?!(?:(?!</?pre\b).)*</pre>)", "><");
+            html = Regex.Replace(html, @"(?s)<!--((?:(?!</?pre\b).)*?)-->(?!(?:(?!</?pre\b).)*</pre>)", "");
+            return html;
         }
 
         private static string[] ListDirectory(string dirspec)

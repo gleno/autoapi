@@ -32,8 +32,7 @@ namespace zeco.autoapi.CodeGeneration
         public Assembly GenerateAutoApiAssembly()
         {
             var source = GenerateSource();
-            var assembly = GenerateAssembly(source);
-            return assembly;
+            return source == null ? null : GenerateAssembly(source);
         }
 
         #endregion
@@ -69,12 +68,15 @@ namespace zeco.autoapi.CodeGeneration
 
         private string GenerateSource()
         {
+            var types = GetAutoApiTypes();
+            if (!types.Any()) return null;
+
             var sb = new StringBuilder();
 
             sb.AppendLine("using " + _baseControllerType.Namespace + ";");
             sb.AppendLine("namespace gen.Controllers {");
 
-            foreach (var type in GetAutoApiTypes())
+            foreach (var type in types)
             {
                 var name = GetClassName(type);
 
@@ -130,11 +132,12 @@ namespace zeco.autoapi.CodeGeneration
             return !specializationExists;
         }
 
-        private IEnumerable<Type> GetAutoApiTypes()
+        private Type[] GetAutoApiTypes()
         {
             return _baseControllerType.Assembly.ExportedTypes
                 .Where(t => t.GetCustomAttribute<AutoApiAttribute>() != null)
-                .Where(SpecializedTypeDoesNotExist);
+                .Where(SpecializedTypeDoesNotExist)
+                .ToArray();
         }
 
         #endregion

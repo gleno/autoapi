@@ -1,21 +1,20 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace zeco.autoapi
 {
     public interface IIdentifiable
     {
-        bool IsDeleted { get; set; }
-
-        string TypeIdentity { get; }
-        
         Guid Id { get; }
+        bool IsDeleted { get; set; }
+        string TypeIdentity { get; }
     }
 
     public interface IUniqueAccessTokenProvider
     {
-        string MakeToken(ISecretResource resource);
         Guid? GetResourceId(string token);
         Guid? GetSignedId(string token, ISecretResource resource);
+        string MakeToken(ISecretResource resource);
         string RecoverToken(ISecretResource resource, Guid signedId);
     }
 
@@ -29,4 +28,24 @@ namespace zeco.autoapi
     {
         Guid Make();
     }
+
+    public interface ICompressionService
+    {
+        byte[] Compress(byte[] buffer);
+        byte[] Decompress(byte[] buffer);
+    }
+
+    public interface ISignatureService
+    {
+        Guid Sign(byte[] buffer);
+        Guid Sign(string text);
+    }
+
+    public interface ISilo
+    {
+        Task<bool> Store(Guid signature, byte[] buffer, string mime = null);
+        Task<byte[]> Retrieve(Guid signature);
+        Task DeleteIfExists(Guid signature);
+    }
+
 }

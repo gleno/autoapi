@@ -49,7 +49,7 @@ namespace zeco.autoapi.CodeGeneration.Generators
                     function load(container) {
                         var element = document.getElementById(container);
                         if (element != null) 
-                            return JSON.parse(element.innerHTML);
+                            return JSON.parse(element.innerHTML) || {};
                         return {};
                     }
 
