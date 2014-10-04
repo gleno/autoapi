@@ -27,7 +27,7 @@ namespace zeco.autoapi
             configuration.Routes.MapHttpRoute("AutoAPI", "api/{controller}/{id}", new {id = RouteParameter.Optional});
         }
 
-        internal override InjectingControllerFactoryBase GetControllerFactoryBase(WindsorInstaller installer)
+        internal override InjectingControllerFactoryBase InitializeControllerFactory(WindsorInstaller installer)
         {
             return new InjectingControllerFactory<TContext, TUser>(typeof (TBaseController)).Install(installer);
         }

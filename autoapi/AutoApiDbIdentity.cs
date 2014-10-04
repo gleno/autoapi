@@ -68,8 +68,7 @@ namespace zeco.autoapi
         }
     }
 
-    public abstract class AutoApiDbContext<TUser> : IdentityDbContext<TUser, AutoApiRole, Guid, AutoApiUserLogin, AutoApiUserRole, AutoApiUserClaim> 
-        where TUser : AutoApiUser
+    public abstract class AutoApiDbContext<TUser> : IdentityDbContext<TUser, AutoApiRole, Guid, AutoApiUserLogin, AutoApiUserRole, AutoApiUserClaim> where TUser : AutoApiUser
     {
 
         public abstract string ModuleName { get;  }
@@ -78,7 +77,6 @@ namespace zeco.autoapi
 
         protected AutoApiDbContext(string connectionString) : base(connectionString) { }
 
-        #region Public Methods
 
         public T Find<T>(Guid id) where T : IIdentifiable
         {
@@ -129,9 +127,12 @@ namespace zeco.autoapi
             return set.Where(item => item.IsDeleted == false);
         }
 
-        #endregion
 
-        #region Other
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+        }
+
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -143,6 +144,6 @@ namespace zeco.autoapi
                 .Configure(c => c.HasColumnType("datetime2"));
         }
 
-        #endregion
+
     }
 }

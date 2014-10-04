@@ -1,7 +1,6 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -10,24 +9,15 @@ using zeco.autoapi.Extensions;
 
 namespace zeco.autoapi.CodeGeneration
 {
-    internal class AutoApiBuilder
+    class AutoApiBuilder
     {
-        #region Fields
 
         private readonly Type _baseControllerType;
-
-        #endregion
-
-        #region Constructors
 
         public AutoApiBuilder(Type baseControllerType)
         {
             _baseControllerType = baseControllerType;
         }
-
-        #endregion
-
-        #region Public Methods
 
         public Assembly GenerateAutoApiAssembly()
         {
@@ -35,9 +25,12 @@ namespace zeco.autoapi.CodeGeneration
             return source == null ? null : GenerateAssembly(source);
         }
 
-        #endregion
-
-        #region Private Helpers
+        private bool SpecializedTypeDoesNotExist(Type type)
+        {
+            var className = GetClassName(type);
+            var specializationExists = _baseControllerType.Assembly.GetExportedTypes().Any(t => t.Name == className + "Controller");
+            return !specializationExists;
+        }
 
         private Assembly GenerateAssembly(string source)
         {
@@ -46,8 +39,8 @@ namespace zeco.autoapi.CodeGeneration
             {
                 GenerateExecutable = false,
                 GenerateInMemory = true,
-                IncludeDebugInformation = Debugger.IsAttached,
-                CompilerOptions = Debugger.IsAttached ? "" : "/optimize",
+                IncludeDebugInformation = this.IsDebug(),
+                CompilerOptions = this.IsDebug() ? "" : "/optimize",
             };
 
             var references = GetAssemblyGraph(_baseControllerType.Assembly)
@@ -91,15 +84,10 @@ namespace zeco.autoapi.CodeGeneration
             return sb.ToString();
         }
 
-        private static string GetClassName(Type type)
-        {
-            return type.Name.Pluralize();
-        }
-
         private IEnumerable<Assembly> GetAssemblyGraph(Assembly assembly = null)
         {
             assembly = assembly ?? Assembly.GetCallingAssembly();
-            
+
             var references = assembly.GetReferencedAssemblies().ToDictionary(asm => asm.Name, asm => asm);
 
             var assemblies = new Dictionary<string, Assembly>();
@@ -125,13 +113,6 @@ namespace zeco.autoapi.CodeGeneration
             return graph;
         }
 
-        public bool SpecializedTypeDoesNotExist(Type type)
-        {
-            var className = GetClassName(type);
-            var specializationExists = _baseControllerType.Assembly.GetExportedTypes().Any(t => t.Name == className + "Controller");
-            return !specializationExists;
-        }
-
         private Type[] GetAutoApiTypes()
         {
             return _baseControllerType.Assembly.ExportedTypes
@@ -140,6 +121,9 @@ namespace zeco.autoapi.CodeGeneration
                 .ToArray();
         }
 
-        #endregion
+        private static string GetClassName(Type type)
+        {
+            return type.Name.Pluralize();
+        }
     }
 }

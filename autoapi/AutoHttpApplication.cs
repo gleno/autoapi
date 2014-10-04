@@ -10,9 +10,11 @@ using System.Web.Http;
 using System.Web.Http.Dispatcher;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Castle.Facilities.TypedFactory;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using Microsoft.AspNet.SignalR;
 using zeco.autoapi.DependencyInjection;
 using zeco.autoapi.Extensions;
 using zeco.autoapi.MVC.Fitlers;
@@ -24,31 +26,39 @@ using HttpPutAttribute = System.Web.Mvc.HttpPutAttribute;
 
 namespace zeco.autoapi
 {
+
     public abstract class AutoHttpApplication : HttpApplication
     {
-        private const string ControllerClassNameSuffix = "Controller";
-        private const string ControllerDefaultActionName = "Index";
-        private readonly WindsorInstaller _installer = new WindsorInstaller();
-        private readonly HashSet<Type> _routedControllers = new HashSet<Type>();
-        private bool _isDefaultActionSet;
+
+        private const string 
+            ControllerClassNameSuffix = "Controller",
+            ControllerDefaultActionName = "Index";
+
+        internal static class Instance
+        {
+            public static readonly WindsorInstaller Installer = new WindsorInstaller();
+            public static readonly HashSet<Type> RoutedControllers = new HashSet<Type>();
+            public static InjectingControllerFactoryBase Factory;
+            public static bool IsDefaultActionSet;
+        }
 
         private void AddRoute<TController>(string action, string url = null, bool idparam = false)
             where TController : Controller
         {
             if (url == string.Empty)
             {
-                if (_isDefaultActionSet)
+                if (Instance.IsDefaultActionSet)
                 {
                     const string error = "More than one default action in configuration.";
                     throw new DuplicateNameException(error);
                 }
-                _isDefaultActionSet = true;
+                Instance.IsDefaultActionSet = true;
             }
 
             var controllerType = typeof (TController);
             var controllerName = controllerType.Name;
 
-            _routedControllers.Add(controllerType);
+            Instance.RoutedControllers.Add(controllerType);
 
             var controller = GetControllerName<TController>();
 
@@ -56,7 +66,7 @@ namespace zeco.autoapi
             var parameters = idparam ? new {controller, action, id = UrlParameter.Optional} : (object) new {controller, action};
 
 
-            RouteTable.Routes.MapRoute(routeName, url ?? CreateActionUrl(action, controller, idparam), parameters, new{url = @"^(?!api\/).*"});
+            RouteTable.Routes.MapRoute(routeName, url ?? CreateActionUrl(action, controller, idparam), parameters, new {url = @"^(?!api\/).*"});
         }
 
         private void AssertActionIsValid<TController>(string name)
@@ -183,22 +193,25 @@ namespace zeco.autoapi
 
         private void SetupApplicationInternal(HttpConfiguration configuration)
         {
+            GlobalHost.Configuration.ConnectionTimeout = TimeSpan.FromMinutes(10);
+            GlobalHost.Configuration.DisconnectTimeout = TimeSpan.FromSeconds(30);
+            GlobalHost.Configuration.KeepAlive = TimeSpan.FromSeconds(10);
+
             SetupComponents(configuration);
 
             Start(configuration);
 
-            _installer.AddInstaller(SetupInternalControllerInjector);
+            Instance.Installer.AddInstaller(SetupInternalControllerInjector);
 
             SetupCustomControllerFactory(configuration);
         }
 
         private void SetupCustomControllerFactory(HttpConfiguration conf)
         {
-            var factory = GetControllerFactoryBase(_installer);
-
+            Instance.Factory = InitializeControllerFactory(Instance.Installer);
             conf.Services.Replace(typeof (IAssembliesResolver), new DefaultAssembliesResolver());
-            conf.Services.Replace(typeof (IHttpControllerActivator), factory);
-            ControllerBuilder.Current.SetControllerFactory(factory);
+            conf.Services.Replace(typeof(IHttpControllerActivator), Instance.Factory);
+            ControllerBuilder.Current.SetControllerFactory(Instance.Factory);
         }
 
         private void SetupFilters(HttpConfiguration configuration)
@@ -222,7 +235,7 @@ namespace zeco.autoapi
 
         public abstract void ConfigureInjector(IWindsorContainer container, IConfigurationStore store);
 
-        internal virtual InjectingControllerFactoryBase GetControllerFactoryBase(WindsorInstaller installer)
+        internal virtual InjectingControllerFactoryBase InitializeControllerFactory(WindsorInstaller installer)
         {
             return new InjectingControllerFactoryBase().Install(installer);
         }
@@ -236,12 +249,23 @@ namespace zeco.autoapi
 
         protected internal virtual void SetupInternalControllerInjector(IWindsorContainer container, IConfigurationStore store)
         {
-            foreach (var controller in _routedControllers)
+            foreach (var controller in Instance.RoutedControllers)
                 container.Register(Component.For(controller).ImplementedBy(controller).LifestylePerWebRequest());
             ConfigureInjector(container, store);
         }
 
         protected abstract void Start(HttpConfiguration configuration);
+
+        internal T Resolve<T>()
+        {
+            return Instance.Factory.Kernel.Resolve<T>();
+        }
+
+        internal object Resolve(string typename)
+        {
+            var type = Type.GetType(typename);
+            return Instance.Factory.Kernel.Resolve(type);
+        }
 
         protected void AddGlobalRoutes<TController>()
             where TController : Controller

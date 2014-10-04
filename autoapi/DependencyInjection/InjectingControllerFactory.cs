@@ -12,11 +12,12 @@ namespace zeco.autoapi.DependencyInjection
         where TContext : AutoApiDbContext<TUser> 
     {
 
-        private readonly Assembly _autoApiAssembly;
+        internal readonly Assembly AutoApiAssembly;
 
-        public InjectingControllerFactory(Type controllerBase)
+        internal InjectingControllerFactory(Type controllerBase)
         {
-            _autoApiAssembly = new AutoApiBuilder(controllerBase).GenerateAutoApiAssembly();
+            AutoApiAssembly = new AutoApiBuilder(controllerBase).GenerateAutoApiAssembly();
+            Util.RegisterAutoApiAssembly(AutoApiAssembly);
         }
 
         public override void ReleaseController(IController controller)
@@ -49,8 +50,8 @@ namespace zeco.autoapi.DependencyInjection
                     .LifestylePerWebRequest()
                 );
 
-            if(_autoApiAssembly != null)
-                _container.Register(Classes.FromAssembly(_autoApiAssembly).BasedOn<ApiController>().LifestylePerWebRequest());
+            if(AutoApiAssembly != null)
+                _container.Register(Classes.FromAssembly(AutoApiAssembly).BasedOn<ApiController>().LifestylePerWebRequest());
 
             return this;
         }
