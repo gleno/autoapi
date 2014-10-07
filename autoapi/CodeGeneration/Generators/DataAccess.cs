@@ -33,7 +33,7 @@ namespace zeco.autoapi.CodeGeneration.Generators
                         Var("cache", "init.cache");
                         foreach (var type in GetDatatypes())
                         {
-                            Var(GetPluralName(type), string.Format("new entityService.communicator<{0}>('{1}', {2})", GetInterfaceName(type), Route(type), "(<any>cache['" + type.FullName + "'] || {})"));
+                            Var(GetPluralName(type), string.Format("new entityService.communicator<{0}>('{1}', '{2}', cache)", GetInterfaceName(type), Route(type), type.FullName));
                         }
 
                         Var("self", "() => users.get(init.global.userId); ");

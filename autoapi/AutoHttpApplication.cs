@@ -11,6 +11,7 @@ using System.Web.Http.Dispatcher;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Castle.Facilities.TypedFactory;
+using Castle.MicroKernel;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
@@ -195,7 +196,7 @@ namespace zeco.autoapi
         {
             GlobalHost.Configuration.ConnectionTimeout = TimeSpan.FromMinutes(10);
             GlobalHost.Configuration.DisconnectTimeout = TimeSpan.FromSeconds(30);
-            GlobalHost.Configuration.KeepAlive = TimeSpan.FromSeconds(10);
+            GlobalHost.Configuration.KeepAlive = TimeSpan.FromSeconds(10);            
 
             SetupComponents(configuration);
 
@@ -319,6 +320,10 @@ namespace zeco.autoapi
 
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
+        }        
+        
+        protected void Application_EndRequest(object sender, EventArgs e)
+        {
         }
 
         protected void Application_AuthenticateRequest(object sender, EventArgs e)
@@ -335,6 +340,14 @@ namespace zeco.autoapi
 
         protected void Application_End(object sender, EventArgs e)
         {
+        }
+    }
+
+    class CastleWindsorDependencyResolver : DefaultDependencyResolver
+    {
+        public CastleWindsorDependencyResolver(IKernel kernel)
+        {
+            throw new NotImplementedException();
         }
     }
 }

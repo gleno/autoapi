@@ -20,10 +20,7 @@ namespace zeco.autoapi.DependencyInjection
             Util.RegisterAutoApiAssembly(AutoApiAssembly);
         }
 
-        public override void ReleaseController(IController controller)
-        {
-            Kernel.ReleaseComponent(controller);
-        }
+
 
         public override InjectingControllerFactoryBase Install(params WindsorInstaller[] installers)
         {
@@ -50,7 +47,7 @@ namespace zeco.autoapi.DependencyInjection
                     .LifestylePerWebRequest()
                 );
 
-            if(AutoApiAssembly != null)
+            if (AutoApiAssembly != null)
                 _container.Register(Classes.FromAssembly(AutoApiAssembly).BasedOn<ApiController>().LifestylePerWebRequest());
 
             return this;

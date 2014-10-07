@@ -6,7 +6,7 @@ using zeco.autoapi.Extensions;
 
 namespace zeco.autoapi
 {
-    internal static class Util
+    public static class Util
     {
         private static readonly HashSet<string> _dupes;
 
@@ -43,7 +43,7 @@ namespace zeco.autoapi
                 _outtypes[type.FullName] = type;
         }
 
-        internal static bool HasAttributeWithProperty<T>(this Type t, Func<T, bool> selector) where T : Attribute
+        public static bool HasAttributeWithProperty<T>(this Type t, Func<T, bool> selector) where T : Attribute
         {
             var attribute = t.GetCustomAttribute<T>();
             if (attribute == null) return false;

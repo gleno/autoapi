@@ -38,10 +38,8 @@ namespace zeco.autoapi.Json
         {
             var property = base.CreateProperty(member, memberSerialization);
 
-
             var isAutoType = typeof (IIdentifiable).IsAssignableFrom(member.DeclaringType);
             var isUserType = typeof(IdentityUser<Guid, AutoApiUserLogin, AutoApiUserRole, AutoApiUserClaim>).IsAssignableFrom(member.DeclaringType);
-
             
             var attr = member.GetCustomAttribute<AutoPropertyAttribute>();
             if (attr == null)

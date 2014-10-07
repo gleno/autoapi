@@ -21,40 +21,26 @@ namespace zeco.autoapi.DependencyInjection
             get { return _container.Kernel; }
         }
 
-        private class ReleaseWrapper : IDisposable
-        {
-
-            private readonly Action _release;
-
-            public ReleaseWrapper(Action release)
-            {
-                _release = release;
-            }
-
-            public void Dispose()
-            {
-                _release();
-            }
-        }
-
         public IHttpController Create(HttpRequestMessage request, HttpControllerDescriptor controllerDescriptor, Type controllerType)
         {
-            var controller = (IHttpController)_container.Resolve(controllerType);
-            request.RegisterForDispose(new ReleaseWrapper(() => _container.Release(controller)));
-            return controller;
+            return (IHttpController)_container.Resolve(controllerType);
         }
 
         protected override IController GetControllerInstance(RequestContext requestContext, Type controllerType)
         {
             if (controllerType == null)
                 return null;
-
-            return (IController)Kernel.Resolve(controllerType);
+            return (IController) Kernel.Resolve(controllerType);
         }
 
         public void Dispose()
         {
             _container.Dispose();
+        }
+
+        public override void ReleaseController(IController controller)
+        {
+            Kernel.ReleaseComponent(controller);
         }
 
         public InjectingControllerFactoryBase()

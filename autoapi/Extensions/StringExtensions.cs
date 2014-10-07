@@ -21,6 +21,14 @@ namespace zeco.autoapi.Extensions
                 return str.ToLowerInvariant();
 
             return char.ToLowerInvariant(str[0]) + str.Substring(1);
+        }        
+        
+        public static string Capitalize(this string str)
+        {
+            if (str.Length < 2)
+                return str.ToUpperInvariant();
+
+            return char.ToUpperInvariant(str[0]) + str.Substring(1);
         }
 
         public static dynamic AsJson(this string str)

@@ -27,7 +27,6 @@ namespace zeco.autoapi
             JsSourceIdPropertyName = SourceIdPropertyName.Decapitalize();
         }
 
-        internal ApiControllerBase() { }
     }
 
     public abstract class ApiControllerBase<TContext, TUser> : ApiControllerBase
@@ -242,6 +241,7 @@ namespace zeco.autoapi
                 return true;
 
             var attr = prop.GetCustomAttribute<AutoPropertyAttribute>();
+
             if(attr != null) if (attr.OwnerCanSet) return true;
 
             return false;
