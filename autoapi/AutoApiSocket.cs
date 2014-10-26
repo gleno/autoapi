@@ -97,6 +97,5 @@ namespace zeco.autoapi
 
             return Connection.Send(connectionId, json);
         }
-
     }
 }

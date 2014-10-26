@@ -126,7 +126,7 @@ namespace zeco.autoapi.MVC
                     return string.Format("<script src='/{0}?rnd={1}'></script>", filename, file.Checksum);
 
                 case SourceType.CSS:
-                    return string.Format("<link rel='stylesheet' href='/{0}?rnd={1}'/>", filename, file.Checksum);
+                    return string.Format("<link rel='stylesheet' href='/{0}'/>", filename);
 
                 default:
                     throw new NotImplementedException();

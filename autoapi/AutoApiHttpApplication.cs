@@ -1,4 +1,8 @@
 using System.Web.Http;
+using Microsoft.AspNet.Identity;
+using Microsoft.Owin;
+using Microsoft.Owin.Security.Cookies;
+using Owin;
 using zeco.autoapi.DependencyInjection;
 using JsonContractResolver = zeco.autoapi.Json.JsonContractResolver;
 
@@ -30,6 +34,20 @@ namespace zeco.autoapi
         internal override InjectingControllerFactoryBase InitializeControllerFactory(WindsorInstaller installer)
         {
             return new InjectingControllerFactory<TContext, TUser>(typeof (TBaseController)).Install(installer);
+        }
+
+        protected override void ConfigureOwin(IAppBuilder app)
+        {
+            base.ConfigureOwin(app);
+
+            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            {
+                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
+                CookieName = "auth",
+                LoginPath = new PathString("/Login")
+            });
+
+            app.MapSignalR<AutoApiSocket>("/socket");
         }
     }
 }

@@ -16,6 +16,7 @@ using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Microsoft.AspNet.SignalR;
+using Owin;
 using zeco.autoapi.DependencyInjection;
 using zeco.autoapi.Extensions;
 using zeco.autoapi.MVC.Fitlers;
@@ -253,6 +254,11 @@ namespace zeco.autoapi
             foreach (var controller in Instance.RoutedControllers)
                 container.Register(Component.For(controller).ImplementedBy(controller).LifestylePerWebRequest());
             ConfigureInjector(container, store);
+        }
+
+        protected virtual void ConfigureOwin(IAppBuilder app)
+        {
+            
         }
 
         protected abstract void Start(HttpConfiguration configuration);
