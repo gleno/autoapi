@@ -10,7 +10,6 @@ using System.Web.Http;
 using System.Web.Http.Dispatcher;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Castle.Facilities.TypedFactory;
 using Castle.MicroKernel;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
@@ -20,7 +19,6 @@ using Owin;
 using zeco.autoapi.DependencyInjection;
 using zeco.autoapi.Extensions;
 using zeco.autoapi.MVC.Fitlers;
-
 using HttpGetAttribute = System.Web.Mvc.HttpGetAttribute;
 using HttpPatchAttribute = System.Web.Mvc.HttpPatchAttribute;
 using HttpPostAttribute = System.Web.Mvc.HttpPostAttribute;
