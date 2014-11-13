@@ -31,20 +31,6 @@ namespace zeco.autoapi.Extensions
             return char.ToUpperInvariant(str[0]) + str.Substring(1);
         }
 
-        public static dynamic AsJson(this string str)
-        {
-            if (String.IsNullOrWhiteSpace(str))
-                return new JsObject();
-
-            return JsonConvert.DeserializeObject<JsObject>(str, new ExpandoObjectConverter());
-        }
-
-        public static dynamic AsJsonArray(this string str)
-        {
-            var wrap = "{array:" + str + "}";
-            return AsJson(wrap).array;
-        }
-
         public static string Pluralize(this string str)
         {
             return _pluralizationService.Pluralize(str);

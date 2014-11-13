@@ -20,26 +20,28 @@ namespace zeco.autoapi.Services
     {
         #region Public Methods
 
+        public static byte[] Transform(byte[] buffer, MemoryStream ms, CompressionMode op)
+        {
+            using (var gz = new GZipStream(ms, op, true))
+            {
+                gz.Write(buffer, 0, buffer.Length);
+                return ms.ToArray();
+            }
+        }
+
         public byte[] Compress(byte[] buffer)
         {
-            using (var input = new MemoryStream(buffer))
-            using (var output = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
-                using (var gs = new GZipStream(output, CompressionMode.Compress))
-                    input.CopyTo(gs);
-
-                return output.ToArray();
+                return Transform(buffer, ms, CompressionMode.Compress);
             }
         }
 
         public byte[] Decompress(byte[] buffer)
         {
-            using (var input = new MemoryStream(buffer))
-            using (var output = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
-                using (var gs = new GZipStream(input, CompressionMode.Decompress))
-                    gs.CopyTo(output);
-                return output.ToArray();
+                return Transform(buffer, ms, CompressionMode.Decompress);
             }
         }
 

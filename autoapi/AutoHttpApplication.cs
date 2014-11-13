@@ -10,6 +10,7 @@ using System.Web.Http;
 using System.Web.Http.Dispatcher;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Castle.Core.Internal;
 using Castle.MicroKernel;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
@@ -45,7 +46,7 @@ namespace zeco.autoapi
         private void AddRoute<TController>(string action, string url = null, bool idparam = false)
             where TController : Controller
         {
-            if (url == string.Empty)
+            if (url.IsNullOrEmpty())
             {
                 if (Instance.IsDefaultActionSet)
                 {

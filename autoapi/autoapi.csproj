@@ -40,6 +40,7 @@
     <WarningLevel>4</WarningLevel>
     <IntermediateOutputPath>C:\temp\vs6755.tmp\Debug\</IntermediateOutputPath>
     <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>ExtendedCorrectnessRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -223,8 +224,6 @@
     <Compile Include="Extensions\GuidExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Json\JsObject.cs" />
-    <Compile Include="Json\JsObjectBase.cs" />
     <Compile Include="Json\JsonContractResolver.cs" />
     <Compile Include="Json\JsonNamingConvention.cs" />
     <Compile Include="GeneratorEntryPoint.cs" />

@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 
 namespace zeco.autoapi.Components
 {
-    public class CryptoRandom : Random
+    public class CryptoRandom : Random, IDisposable
     {
         private readonly RNGCryptoServiceProvider _rng = new RNGCryptoServiceProvider();
         private readonly byte[] _uint32Buffer = new byte[4];
@@ -51,6 +51,18 @@ namespace zeco.autoapi.Components
         {
             if (buffer == null) throw new ArgumentNullException("buffer");
             _rng.GetBytes(buffer);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing && _rng != null)
+                _rng.Dispose();
         }
     }
 }

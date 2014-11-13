@@ -124,7 +124,7 @@ namespace zeco.autoapi
             {
                 type = type.BaseType;
                 if (type == null)
-                    throw new Exception(string.Format("Unable to get basetype for {0}", tt));
+                    throw new Exception(string.Format("Unable to get base type for {0}", tt));
             }
 
             return type.FullName;
