@@ -75,6 +75,9 @@ namespace zeco.autoapi
         [HttpGet]
         public virtual IQueryable<T> Get()
         {
+            if (Self == null)
+                return (new T[0]).AsQueryable();
+
             if (Self.IsAdmin)
                 return Context.Query<T>();
 

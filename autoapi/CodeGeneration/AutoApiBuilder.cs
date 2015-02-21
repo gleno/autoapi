@@ -88,24 +88,17 @@ namespace zeco.autoapi.CodeGeneration
         {
             assembly = assembly ?? Assembly.GetCallingAssembly();
 
-            var references = assembly.GetReferencedAssemblies().ToDictionary(asm => asm.Name, asm => asm);
+            var references = new Dictionary<string, AssemblyName>();
+            foreach (var name in assembly.GetReferencedAssemblies())
+                references[name.Name] = name;
 
             var assemblies = new Dictionary<string, Assembly>();
-
-            var keys = new HashSet<string>(references.Keys);
-
-            foreach (var name in keys.ToArray())
+            foreach (var name in references.Keys)
             {
-                var asm = Assembly.Load(references[name]);
-                assemblies[name] = asm;
-
+                var asm = assemblies[name] = Assembly.Load(references[name]);
                 foreach (var reference in asm.GetReferencedAssemblies())
-                {
                     if (!assemblies.ContainsKey(reference.Name))
-                    {
                         assemblies[reference.Name] = Assembly.Load(reference);
-                    }
-                }
             }
 
             var graph = new List<Assembly> {assembly};

@@ -31,7 +31,6 @@ namespace zeco.autoapi.MVC
 
         public static IHtmlString InlineFile(this HtmlHelper helper, string filename)
         {
-
             if (helper.IsDebug())
             {
                 var tags = "";

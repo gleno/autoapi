@@ -40,7 +40,6 @@ namespace zeco.autoapi.CodeGeneration.Generators
 
                     });
 
-                var enums = new HashSet<Type>();
 
                 foreach (var type in GetDatatypes())
                 {
@@ -61,10 +60,7 @@ namespace zeco.autoapi.CodeGeneration.Generators
 
                                     var typename = GetInterfaceName(property.PropertyType);
                                     if (ptype.IsEnum)
-                                    {
                                         typename = ptype.Name;
-                                        enums.Add(ptype);
-                                    }
 
                                     var nullable = false;
 
@@ -81,19 +77,6 @@ namespace zeco.autoapi.CodeGeneration.Generators
                         );
                 }
 
-                foreach (var @enum in enums)
-                {
-                    Scope(string.Format("enum {0}", @enum.Name), () =>
-                    {
-                        var values = @enum.GetEnumValues();
-                        var names = @enum.GetEnumNames();
-                        for (int i = 0; i < names.Length; i++)
-                        {
-                            Statement(string.Format("{0} = {1}{2}", names[i], (int) values.GetValue(i), ","));
-                        }
-                    });
-
-                }
             });
         }
     }

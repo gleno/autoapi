@@ -1,5 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Reflection;
+using zeco.autoapi.Extensions;
 
 namespace zeco.autoapi.CodeGeneration.Generators
 {
@@ -14,6 +18,34 @@ namespace zeco.autoapi.CodeGeneration.Generators
         {
             Scope(string.Format("module {0}", ModuleName), () =>
             {
+
+                var enums = new HashSet<Type>();
+
+                foreach (var type in GetDatatypes())
+                {
+                    foreach (var property in type.GetProperties().OrderBy(o => o.Name))
+                    {
+                        var attr = property.GetCustomAttribute<AutoPropertyAttribute>();
+                        if (attr != null)
+                        {
+                            var ptype = property.PropertyType;
+                            if (ptype.IsEnum) enums.Add(ptype);
+                        }
+                    }
+                }
+
+                foreach (var @enum in enums)
+                {
+                    Scope(string.Format("export enum {0}", @enum.Name), () =>
+                    {
+                        var values = @enum.GetEnumValues();
+                        var names = @enum.GetEnumNames();
+                        for (var i = 0; i < names.Length; i++)
+                            Statement(string.Format("{0} = {1}{2}", names[i], (int)values.GetValue(i), ","));
+                    });
+
+                }
+
                 Scope("export interface IDataService", () =>
                 {
 
