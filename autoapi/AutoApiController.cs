@@ -240,10 +240,15 @@ namespace zeco.autoapi
 
         protected virtual bool CanSetValue(PropertyInfo prop)
         {
-            if (Self.IsAdmin && prop.CanWrite)
+            if (!prop.CanWrite) return false;
+
+            if (Self.IsAdmin) 
                 return true;
 
             var attr = prop.GetCustomAttribute<AutoPropertyAttribute>();
+            var aaa = prop.DeclaringType.GetCustomAttributes<AutoApiAttribute>().FirstOrDefault();
+            if (aaa != null && aaa.OwnerHasFullControll)
+                return true;
 
             if(attr != null) if (attr.OwnerCanSet) return true;
 

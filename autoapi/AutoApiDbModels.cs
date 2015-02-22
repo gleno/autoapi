@@ -130,7 +130,7 @@ namespace zeco.autoapi
             return type.FullName;
         }
 
-        [AutoProperty]
+        [AutoProperty(OwnerCanSet = true)]
         public virtual string Name { get; set; }
 
         protected Item()

@@ -87,7 +87,7 @@ namespace zeco.autoapi.MVC
             switch (file.Type)
             {
                 case SourceType.Template:
-                    return string.Format("<script type=\"text/ng-template\" id=\"{0}\">", file.FullName);
+                    return string.Format("<script type=\"text/ng-template\" id=\"/{0}\">", file.FullName);
 
                 default:
                     return "";
