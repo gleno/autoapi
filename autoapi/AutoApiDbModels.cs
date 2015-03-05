@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -12,6 +11,8 @@ namespace zeco.autoapi
     [AttributeUsage(AttributeTargets.Class)]
     public class AutoApiAttribute : Attribute
     {
+        public bool AnyUserCanRead { get; set; }
+
         public bool AnyUserCanAdd { get; set; }
 
         public bool OwnerCanAdd { get; set; }
@@ -37,6 +38,7 @@ namespace zeco.autoapi
     {
         public bool OwnerCanSet { get; set; }
         public string PropertyName { get; set; }
+        public bool DecodeJson { get; set; }
     }
 
     public abstract class AutoApiUser : IdentityUser<Guid, AutoApiUserLogin, AutoApiUserRole, AutoApiUserClaim>, IIdentifiable

@@ -23,9 +23,12 @@ namespace zeco.autoapi.Json
             public object GetValue(object target)
             {
                 var value = (IEnumerable<IIdentifiable>)Property.GetMethod.Invoke(target, new object[0]);
-                if (value == null)
-                    return new Guid[0];
-                return value.Where(t => !t.IsDeleted).Select(t => t.Id).ToArray();
+                if (value == null) return new Guid[0];
+
+                return value
+                    .Where(t => !t.IsDeleted)
+                    .Select(t => t.Id)
+                    .ToArray();
             }
 
             public ItemKeyProvider(PropertyInfo property)
@@ -44,7 +47,8 @@ namespace zeco.autoapi.Json
             var attr = member.GetCustomAttribute<AutoPropertyAttribute>();
             if (attr == null)
             {
-                if (isAutoType || isUserType) property.ShouldSerialize = instance => false;
+                if (isAutoType || isUserType) 
+                    property.ShouldSerialize = instance => false;
                 return property;
             }
 

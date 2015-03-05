@@ -2,7 +2,7 @@ using System;
 
 namespace zeco.autoapi.Providers
 {
-    internal class ConcurrentGuidProvider : IGuidProvider
+    public class ConcurrentGuidProvider : IGuidProvider
     {
         public Guid Make()
         {

@@ -78,7 +78,7 @@ namespace zeco.autoapi
             if (Self == null)
                 return (new T[0]).AsQueryable();
 
-            if (Self.IsAdmin)
+            if (Self.IsAdmin || typeof (T).HasAttributeWithProperty<AutoApiAttribute>(a => a.AnyUserCanRead))
                 return Context.Query<T>();
 
             if (IsRootedIn<TUser>())

@@ -26,9 +26,6 @@ namespace zeco.autoapi.Providers
 
         public Guid? GetSignedId(string token, ISecretResource resource)
         {
-            if (token == null || token.Length != 44)
-                return null;
-
             var a = token.Substring(0, 22).AsGuid();
             var b = token.Substring(22, 22).AsGuid();
 
