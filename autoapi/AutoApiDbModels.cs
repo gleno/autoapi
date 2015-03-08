@@ -89,6 +89,7 @@ namespace zeco.autoapi
             IdentityShortName = "id",
             TypeIdentityShortName = "type";
 
+        [Index]
         [Required]
         public bool IsDeleted { get; set; }
 
@@ -162,6 +163,7 @@ namespace zeco.autoapi
     {
         [Required]
         [AutoProperty]
+        [Index]
         public Guid SourceId { get; set; }
 
         [ForeignKey("SourceId")]

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
+using System.Reflection;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
@@ -117,6 +118,7 @@ namespace zeco.autoapi
 
             var collections = typeof (T)
                 .GetProperties()
+                .Where(p => p.GetCustomAttribute<AutoPropertyAttribute>() != null)
                 .Where(p => !typeof(string).IsAssignableFrom(p.PropertyType))
                 .Where(p => !typeof(byte[]).IsAssignableFrom(p.PropertyType))
                 .Where(p => typeof (IEnumerable).IsAssignableFrom(p.PropertyType));
