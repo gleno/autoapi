@@ -40,7 +40,7 @@ namespace zeco.autoapi.CodeGeneration
                 GenerateExecutable = false,
                 GenerateInMemory = true,
                 IncludeDebugInformation = this.IsDebug(),
-                CompilerOptions = this.IsDebug() ? "" : "/optimize",
+                CompilerOptions = this.IsDebug() ? "" : "/optimize"
             };
 
             var references = GetAssemblyGraph(_baseControllerType.Assembly)
