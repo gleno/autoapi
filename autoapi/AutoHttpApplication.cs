@@ -323,7 +323,7 @@ namespace zeco.autoapi
         {
         }
 
-        protected void Application_BeginRequest(object sender, EventArgs e)
+        protected virtual void Application_BeginRequest(object sender, EventArgs e)
         {
         }        
         

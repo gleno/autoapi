@@ -33,7 +33,7 @@ namespace zeco.autoapi
         }
     }
 
-    [AttributeUsage(AttributeTargets.Property, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property)]
     public class AutoPropertyAttribute : Attribute
     {
         public bool OwnerCanSet { get; set; }
@@ -43,7 +43,6 @@ namespace zeco.autoapi
 
     public abstract class AutoApiUser : IdentityUser<Guid, AutoApiUserLogin, AutoApiUserRole, AutoApiUserClaim>, IIdentifiable
     {
-
         private static readonly ConcurrentDictionary<Guid, bool> _adminCache 
             = new ConcurrentDictionary<Guid, bool>();
 
@@ -60,10 +59,7 @@ namespace zeco.autoapi
 
         [NotMapped]
         [AutoProperty(PropertyName = Item.TypeIdentityShortName)]
-        public string TypeIdentity
-        {
-            get { return Item.GetTypeIdentity(GetType()); }
-        }
+        public string TypeIdentity => Item.GetTypeIdentity(GetType());
 
         [AutoProperty]
         public override Guid Id
@@ -80,6 +76,16 @@ namespace zeco.autoapi
             {
                 return _adminCache.GetOrAdd(Id, id => Roles.Any(r => r.AutoApiRole.Name == AdminRole));
             }
+        }
+
+        public virtual Guid MakeIdFromUniqueIdentifier(string identifier)
+        {
+            return Guid.Parse(identifier);
+        }
+
+        public virtual string MakeUserNameFromUniqueIdentifier(string identifier)
+        {
+            return identifier;
         }
     }
 
@@ -127,7 +133,7 @@ namespace zeco.autoapi
             {
                 type = type.BaseType;
                 if (type == null)
-                    throw new Exception(string.Format("Unable to get base type for {0}", tt));
+                    throw new Exception($"Unable to get base type for {tt}");
             }
 
             return type.FullName;

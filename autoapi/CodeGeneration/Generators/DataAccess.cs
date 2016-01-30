@@ -1,24 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
-using zeco.autoapi.Extensions;
 
 namespace zeco.autoapi.CodeGeneration.Generators
 {
     class DataAccess : TypeScriptCodeGenerator
     {
-        public override string Filename
-        {
-            get { return "data.access.ts"; }
-        }
+        public override string Filename => "data.access.ts";
 
         protected override void GenerateInternal()
         {
-            Scope(string.Format("module {0}", ModuleName), () =>
+            Scope($"namespace {ModuleName}", () =>
             {
-
                 var enums = new HashSet<Type>();
 
                 foreach (var type in GetDatatypes())
@@ -36,12 +30,12 @@ namespace zeco.autoapi.CodeGeneration.Generators
 
                 foreach (var @enum in enums)
                 {
-                    Scope(string.Format("export enum {0}", @enum.Name), () =>
+                    Scope($"export enum {@enum.Name}", () =>
                     {
                         var values = @enum.GetEnumValues();
                         var names = @enum.GetEnumNames();
                         for (var i = 0; i < names.Length; i++)
-                            Statement(string.Format("{0} = {1}{2}", names[i], (int)values.GetValue(i), ","));
+                            Statement($"{names[i]} = {(int) values.GetValue(i)}{","}");
                     });
 
                 }
@@ -50,25 +44,25 @@ namespace zeco.autoapi.CodeGeneration.Generators
                 {
 
                     foreach (var type in GetDatatypes())
-                        Statement(string.Format("{0}: ICommunicator<{1}>;", 
-                            GetPluralName(type), GetInterfaceName(type)));
+                        Statement($"{GetPluralName(type)}: ICommunicator<{GetInterfaceName(type)}>;");
 
                     Statement("clear: () => void;");
-                    Statement("self: () => ng.IPromise<IUser>");
+                    Statement("self: (id?:string) => ng.IPromise<IUser>;");
                 });
 
-                Scope("export module factories", () =>
+                Scope("export namespace factories", () =>
                 {
                     Scope("export function data(entityService:IEntityService, init:IInitializationService) : IDataService", () =>
                     {
 
-                        Var("cache", "init.cache");
+                        Const("cache", "init.cache");
                         foreach (var type in GetDatatypes())
                         {
-                            Var(GetPluralName(type), string.Format("new entityService.communicator<{0}>('{1}', '{2}', cache)", GetInterfaceName(type), Route(type), type.FullName));
+                            Const(GetPluralName(type),
+                                $"new entityService.communicator<{GetInterfaceName(type)}>('{Route(type)}', '{type.FullName}', cache)");
                         }
 
-                        Var("self", "() => users.get(init.global.userId); ");
+                        Const("self", "(id = null) => users.get(id || init.global.userId)");
 
                         var dict = new Dictionary<string, Action>();
 
@@ -82,7 +76,7 @@ namespace zeco.autoapi.CodeGeneration.Generators
                         Return("service");
                     });
 
-                    Statement("data.$inject=['entityService', 'initialization'];");
+                    Statement("data.$inject=[\"entityService\", \"initialization\"];");
                 });
             });
         }

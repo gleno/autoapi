@@ -3,9 +3,6 @@ using System.Data.Entity.Design.PluralizationServices;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using zeco.autoapi.Json;
 
 namespace zeco.autoapi.Extensions
 {

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,14 +8,11 @@ namespace zeco.autoapi.CodeGeneration.Generators
 {
     class DataGenerator : TypeScriptCodeGenerator
     {
-        public override string Filename
-        {
-            get { return "data.d.ts"; }
-        }
+        public override string Filename => "data.d.ts";
 
         protected override void GenerateInternal()
         {
-            Scope(string.Format("declare module {0}", ModuleName), () =>
+            Scope($"declare namespace {ModuleName}", () =>
             {
 
                 var itemprops = new HashSet<string>();
@@ -32,18 +28,18 @@ namespace zeco.autoapi.CodeGeneration.Generators
                             {
                                 var name = attr.PropertyName ?? property.Name.Decapitalize();
                                 var typename = GetInterfaceName(property.PropertyType);
-                                Statement(string.Format("{0}: {1};", name, typename));
+                                Statement($"{name}: {typename};");
                                 itemprops.Add(name);
                             }
                         }
-                        Statement(string.Format("{0}: {1};", "sourceId?", "string"));
+                        Statement($"{"sourceId?"}: {"string"};");
 
                     });
 
 
                 foreach (var type in GetDatatypes())
                 {
-                    Scope(string.Format("interface I{0} extends IItem", type.Name),
+                    Scope($"interface I{type.Name} extends IItem",
                         () =>
                         {
                             foreach (var property in type.GetProperties().OrderBy(o => o.Name))
@@ -69,7 +65,7 @@ namespace zeco.autoapi.CodeGeneration.Generators
                                     else if (ptype.IsNullableValueType())
                                         nullable = true;
 
-                                    Statement(string.Format("{0}{1}: {2};", name, nullable ? "?" : "", typename));
+                                    Statement($"{name}{(nullable ? "?" : "")}: {typename};");
 
                                 }
                             }

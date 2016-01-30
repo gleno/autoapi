@@ -2,19 +2,16 @@ namespace zeco.autoapi.CodeGeneration.Generators
 {
     class EntitiesGenerator : TypeScriptCodeGenerator
     {
-        public override string Filename
-        {
-            get { return "entities.ts"; }
-        }
+        public override string Filename => "entities.ts";
 
         protected override void GenerateInternal()
         {
-            Raw(string.Format(@"module {0} {{", ModuleName));
+            Raw($@"namespace {ModuleName} {{");
             Raw(@"
 
             export interface IInitializationService {
-                global: any
-                cache: any
+                global: any;
+                cache: any;
                 setGlobal(value:any);
             }
 
@@ -33,7 +30,7 @@ namespace zeco.autoapi.CodeGeneration.Generators
                  putmany(entities: any[]): ng.IPromise<T[]>;
                  post(entity: T): ng.IPromise<any>;
                  del(id: string, sourceId?: string): ng.IPromise<any>;
-                 list: T[]
+                 list: T[];
                  loadList: boolean;
              }
           
@@ -42,27 +39,27 @@ namespace zeco.autoapi.CodeGeneration.Generators
                  clear: () => void;
              }
           
-             export module factories {
+             export namespace factories {
 
                 export function initialization() : IInitializationService {
 
                     function load(container) {
-                        var element = document.getElementById(container);
+                        const element = document.getElementById(container);
                         if (element != null) 
                             return JSON.parse(element.innerHTML) || {};
                         return {};
                     }
 
                     var service = {
-                        global: load('__global'),
-                        cache: load('__cache'),
-                        setGlobal: function (value: any) {
+                        global: load(""__global""),
+                        cache: load(""__cache""),
+                        setGlobal: (value: any) => {
 
-                            for (var key in service.global)
+                            for (let key in service.global)
                                 if (service.global.hasOwnProperty(key))
                                     delete service.global[key];
 
-                            for (var key in value)
+                            for (let key in value)
                                 if (value.hasOwnProperty(key))
                                     service.global[key] = value[key];
                         }
@@ -117,18 +114,18 @@ namespace zeco.autoapi.CodeGeneration.Generators
                      var socketSequence = 0;
                      var socketPromises = {};
 
-                     if ($ && (<any>$).signalR && (<any>window).WebSocket) {
-                        socket = (<any>$).connection('/socket');
+                     if ($ && ($ as any).signalR && (window as any).WebSocket) {
+                        socket = ($ as any).connection(""/socket"");
 
-                        socket.received(function (json: any) {
-                            var data = JSON.parse(json);
+                        socket.received((json: any) => {
+                            const data = JSON.parse(json);
                             socketPromises[data.sequence].resolve(data);
                             delete socketPromises[data.sequence];
                         });
 
-                        socket.stateChanged(function(change) {
+                        socket.stateChanged((change) => {
                             useSocket = false;
-                            if (change.newState === (<any>$).signalR.connectionState.connected) {
+                            if (change.newState === ($ as any).signalR.connectionState.connected) {
                                 useSocket = true;
                             }
                         });
@@ -136,11 +133,11 @@ namespace zeco.autoapi.CodeGeneration.Generators
                     }
           
                      function error() {
-                         $rootScope.$broadcast('fatal-data-error');
+                         $rootScope.$broadcast(""fatal-data-error"");
                      }
           
                      function init() {
-                         var scope = <IEntityScope><any>$rootScope.$new(true);
+                         const scope = <IEntityScope><any>$rootScope.$new(true);
                          scope.entities = {};
                          scope.watchers = {};
                          scope.communicators = {};
@@ -154,28 +151,29 @@ namespace zeco.autoapi.CodeGeneration.Generators
                         if (sourceId == null)
                             return;
 
-                        var srcCommunicator = scope.communicators[sourceId];
+                        const srcCommunicator = scope.communicators[sourceId];
                         if (srcCommunicator != null) srcCommunicator.get(sourceId);
                     }
           
                      function communicator<T extends IItem>(url, typename, cache:any): void {
 
                          var cominst = this;
-                         var items = (cache[typename] || {});
-                         var cachem = <any>{};
+                         var cachem: any = {};
+                         const items = (cache[typename] || {});
           
-                         function transcribe(old, ent) {
-          
-                             for (var attr in ent) {
-                                 var value = ent[attr];
-                                 if (value === null)
-                                     old[attr] = null;
-                                 else if (value instanceof Array) {
-                                     old[attr].length = 0;
-                                     transcribe(old[attr], value);
-                                 } else if (typeof value == 'object') {
-                                     transcribe(old[attr], value);
-                                 } else old[attr] = ent[attr];
+                         function transcribe(old: any, ent: any) {
+                             for (let attr in ent) {
+                                 if (ent.hasOwnProperty(attr)) {
+                                     const value = ent[attr];
+                                     if (value === null)
+                                         old[attr] = null;
+                                     else if (value instanceof Array) {
+                                         old[attr].length = 0;
+                                         transcribe(old[attr], value);
+                                     } else if (typeof value == ""object"") {
+                                         transcribe(old[attr], value);
+                                     } else old[attr] = ent[attr];
+                                 }
                              }
                          }
           
@@ -183,43 +181,37 @@ namespace zeco.autoapi.CodeGeneration.Generators
           
                              function makeWatcher() {
                                  var updater = delayedUpdater(e => post(e), 500);
-          
-                                 function watchfn(n, o) {
+
+                                 function watchfn(n: any, o: any) {
                                      if (n !== o) updater(n);
                                  }
-          
-                                 return scope.$watch('entities[""' + entity.id + '""]', watchfn, true);
+
+                                 return scope.$watch(`entities[""${entity.id}""]`, watchfn, true);
                              }
           
                              if (cascadeChanges)
                                  cascade(entity.sourceId);
-          
-                             var oldEntity = scope.entities[entity.id];
-          
+
+                             const oldEntity = scope.entities[entity.id];
+
                              if (oldEntity === undefined) {
-                                 var watcher = makeWatcher();
-          
+                                 const watcher = makeWatcher();
                                  scope.entities[entity.id] = entity;
                                  scope.watchers[entity.id] = watcher;
                                  scope.communicators[entity.id] = cominst;
-          
                                  return entity;
                              } else {
+                                 const watcher = makeWatcher();
                                  scope.watchers[entity.id]();
-          
                                  transcribe(oldEntity, entity);
-          
-                                 var watcher = makeWatcher();
                                  scope.watchers[entity.id] = watcher;
                                  return oldEntity;
                              }
-          
-          
                          }
 
-                         function flush(method, data) {
-                             var def = $q.defer<any>();
-                             var seq = socketSequence++;
+                         function flush(method: any, data: any) {
+                             const def = $q.defer<any>();
+                             const seq = socketSequence++;
                              socketPromises[seq] = def;
                              socket.send({
                                  method: method,
@@ -242,14 +234,14 @@ namespace zeco.autoapi.CodeGeneration.Generators
                                  }).error(error);
                          }
           
-                         function updater<Q>(promise: ng.IPromise<{data:Q}>, process: (item: Q) => Q) {
-                             $rootScope.$broadcast('updating');
+                         function updater<TQ>(promise: ng.IPromise<{data:TQ}>, process: (item: TQ) => TQ) {
+                             $rootScope.$broadcast(""updating"");
           
-                             var defer = $q.defer<Q>();
+                             var defer = $q.defer<TQ>();
           
                              promise.then((result) => {
                                  defer.resolve(process(result.data));
-                                 $rootScope.$broadcast('updated');
+                                 $rootScope.$broadcast(""updated"");
                              }).catch(error);
           
                              return defer.promise;
@@ -258,13 +250,13 @@ namespace zeco.autoapi.CodeGeneration.Generators
                          function get(id: string): ng.IPromise<T> {
 
                             if (cachem[id]) {
-                                 var defer = $q.defer();
+                                 const defer = $q.defer();
                                  defer.resolve(scope.entities[id]);
                                  cachem[id] = false;
                                  return defer.promise;
                              }
 
-                             return updater<T>(request('GET', {id:id}), (e: T) => register(e, false));
+                             return updater<T>(request(""GET"", {id:id}), (e: T) => register(e, false));
                          }
           
                          function getall(): ng.IPromise<T[]> {
@@ -272,23 +264,27 @@ namespace zeco.autoapi.CodeGeneration.Generators
           
                              function process(entities: T[]) {
                                  cominst.list.length = 0;
-                                 for (var idx in entities) {
-                                     var entity = entities[idx];
-                                     cominst.list.push(register(entity, false));
+                                 for (let idx in entities) {
+                                     if (entities.hasOwnProperty(idx)) {
+                                         const entity = entities[idx];
+                                         cominst.list.push(register(entity, false));
+                                     }
                                  }
                                  return cominst.list;
                              }
           
-                             return updater(request('GET'), process);
+                             return updater(request(""GET""), process);
                          }
           
                          function getsome(ids: string[], list = []): ng.IPromise<T[]> {
           
                              function process(entities: T[]) {
                                  list.length = 0;
-                                 for (var idx in entities) {
-                                     var entity = entities[idx];
-                                     list.push(register(entity, false));
+                                 for (let idx in entities) {
+                                     if (entities.hasOwnProperty(idx)) {
+                                         const entity = entities[idx];
+                                         list.push(register(entity, false));
+                                     }
                                  }
                                  return list;
                              }
@@ -296,15 +292,15 @@ namespace zeco.autoapi.CodeGeneration.Generators
                              function update(idset) {
           
                                  if (!idset.length) {
-                                     var dud = $q.defer();
+                                     const dud = $q.defer();
                                      dud.resolve(list);
                                      return updater(dud.promise, process);                            
                                  }
 
-                                 var useCache = true;
-                                 var clist = [];
-                                 for (var idx = 0; idx < idset.length; ++idx) {
-                                     var id = idset[idx];
+                                 let useCache = true;
+                                 const clist = [];
+                                 for (let idx = 0; idx < idset.length; ++idx) {
+                                     const id = idset[idx];
                                      if (cachem[id]) {
                                          cachem[id] = false;
                                          clist.push(scope.entities[id]);
@@ -316,45 +312,40 @@ namespace zeco.autoapi.CodeGeneration.Generators
 
                                  if (useCache) {
                                      list.length = 0;
-                                     for (var i = 0; i < clist.length; ++i)
+                                     for (let i = 0; i < clist.length; ++i)
                                          list.push(clist[i]);
-                                     
-                                     var defer = $q.defer();
+
+                                     const defer = $q.defer();
                                      defer.resolve(list);
                                      return defer.promise;
                                  }
                                 
-                                 return updater(request('PATCH', idset), process);
+                                 return updater(request(""PATCH"", idset), process);
                              }
           
                              function setupWatcher() {
-
                                  var skip = true;
-                                 function watchfn(n, o) {
+                                 function watchfn() {
                                      if (!skip) update(ids);
                                      skip = false;
                                  }
 
-                                 for (var i = 0; i < trackedLists.length; ++i)
+                                 for (let i = 0; i < trackedLists.length; ++i)
                                      if (list === trackedLists[i]) return;
 
                                  trackedLists.push(list);
 
-                                 var watchId = registerCounter++;
+                                 const watchId = registerCounter++;
                                  scope.arrayWatchers[watchId] = ids;
-                                 scope.$watch('arrayWatchers[' + watchId + ']', watchfn, true);
+                                 scope.$watch(`arrayWatchers[${watchId}]`, watchfn, true);
                              }
           
-                             
                              setupWatcher();
-          
                              return update(ids);
                          }
           
                          function put(entity: any): ng.IPromise<T> {
-
-                             var promise = request('PUT', entity);
-
+                             const promise = request(""PUT"", entity);
                              if (cominst.loadList)
                                  promise.then(() => getall());
           
@@ -362,41 +353,40 @@ namespace zeco.autoapi.CodeGeneration.Generators
                          }
 
                          function putmany(entities: any[]): ng.IPromise<T[]> {
-
-                             var promise = request('PUT', entities);
-
+                             const promise = request(""PUT"", entities);
                              if (cominst.loadList)
                                  promise.then(() => getall());
 
                              return updater<T[]>(promise, (es: T[]) => {
                                  var cascadePaths = {};
-                                 for (var i = 0; i < es.length; ++i) {
-                                     var e = es[i];
+                                 for (let i = 0; i < es.length; ++i) {
+                                     const e = es[i];
                                      cascadePaths[e.sourceId] = true;
                                      register(e, false);
                                  }
 
-                                 for (var path in cascadePaths)
-                                     cascade(path);
-                                 
+                                 for (let path in cascadePaths)
+                                     if (cascadePaths.hasOwnProperty(path))
+                                         cascade(path);
+
                                  return es;
                              });
                          }
           
                          function post(entity: T): ng.IPromise<any> {
-                             return request('POST', entity).then((e: T) => {
-                                 $rootScope.$broadcast('modified');
+                             return request(""POST"", entity).then(() => {
+                                 $rootScope.$broadcast(""modified"");
                              });
                          }
           
                          function del(id: string, sourceId: string = null): ng.IPromise<void> {
           
-                             var promise = request('DELETE', {id:id});
+                             const promise = request(""DELETE"", { id: id });
           
                              if (cominst.loadList)
                                  promise.then(() => getall());
           
-                             return promise.then(function () {
+                             return promise.then(() => {
 
                                  if (scope.entities[id] != null) {
                                      scope.watchers[id]();
@@ -420,15 +410,17 @@ namespace zeco.autoapi.CodeGeneration.Generators
                          this.del = del;
                          this.putmany = putmany;
 
-                         for (var _id in items) {
-                             cachem[_id] = true;
-                             register(items[_id], false);
+                         for (let id in items) {
+                             if (items.hasOwnProperty(id)) {
+                                 cachem[id] = true;
+                                 register(items[id], false);
+                             }
                          }
                      }
           
-                     var service = {
+                     const service = {
                          communicator: communicator,
-                         clear: function () {
+                         clear: () => {
                              scope.$destroy();
                              scope = init();
                          }
@@ -438,8 +430,7 @@ namespace zeco.autoapi.CodeGeneration.Generators
           
                  }
           
-                 entityService.$inject = ['$http', '$rootScope', '$q'];
-          
+                 entityService.$inject = [""$http"", ""$rootScope"", ""$q""];
              }
 }");
         }

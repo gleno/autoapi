@@ -64,15 +64,25 @@ namespace zeco.autoapi.CodeGeneration
             Statement("var " + var + " = " + value + ";");
         }
 
+        protected void Const(string var, string value)
+        {
+            Statement("const " + var + " = " + value + ";");
+        }
+
+        protected void Let(string var, string value)
+        {
+            Statement("let " + var + " = " + value + ";");
+        }
+
         protected void JObject(string var, IDictionary<string, Action> props)
         {
 
-            Statement("var " + var + " = {");
+            Statement("const " + var + " = {");
             ++_depth;
 
             var keys = props.Keys.ToArray().ToArray();
 
-            for (int index = 0; index < keys.Length; index++)
+            for (var index = 0; index < keys.Length; index++)
             {
                 var key = keys[index];
                 Statement("'" + key + "' : ");

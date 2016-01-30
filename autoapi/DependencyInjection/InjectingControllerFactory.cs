@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using System.Web.Http;
-using System.Web.Mvc;
 using Castle.MicroKernel.Registration;
 using zeco.autoapi.CodeGeneration;
 
@@ -19,8 +18,6 @@ namespace zeco.autoapi.DependencyInjection
             AutoApiAssembly = new AutoApiBuilder(controllerBase).GenerateAutoApiAssembly();
             Util.RegisterAutoApiAssembly(AutoApiAssembly);
         }
-
-
 
         public override InjectingControllerFactoryBase Install(params WindsorInstaller[] installers)
         {

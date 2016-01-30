@@ -31,7 +31,7 @@ namespace zeco.autoapi
 
     public abstract class ApiControllerBase<TContext, TUser> : ApiControllerBase
         where TContext : AutoApiDbContext<TUser>
-        where TUser : AutoApiUser
+        where TUser : AutoApiUser, new()
     {
         public TContext Context { get; set; }
 
@@ -47,19 +47,19 @@ namespace zeco.autoapi
             {
                 if (_user == null)
                 {
-                    var userId = Guid.Parse(User.Identity.GetUserId());
+                    var claimsId = User.Identity.GetUserId();
+                    var userId = new TUser().MakeIdFromUniqueIdentifier(claimsId);
+
                     _user = UserManager.FindById(userId);
                 }
                 return _user;
             }
         }
-
-        //internal ApiControllerBase() { }
     }
 
     [Authorize]
     public abstract class AutoApiController<T, TContext, TUser> : ApiControllerBase<TContext, TUser> 
-        where T : class, IIdentifiable, new() where TUser : AutoApiUser where TContext : AutoApiDbContext<TUser>
+        where T : class, IIdentifiable, new() where TUser : AutoApiUser, new() where TContext : AutoApiDbContext<TUser>
     {
 
         private bool _batching;

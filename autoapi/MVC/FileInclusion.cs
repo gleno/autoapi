@@ -31,17 +31,18 @@ namespace zeco.autoapi.MVC
 
         public static IHtmlString InlineFile(this HtmlHelper helper, string filename)
         {
+            var names = GetNames(filename);
+
             if (helper.IsDebug())
             {
                 var tags = "";
-                foreach (var name in GetNames(filename))
+                foreach (var name in names)
                     tags += GetLinkTags(name);
                 return new HtmlString(tags);
             }
 
             if (!_cache.ContainsKey(filename))
             {
-                var names = GetNames(filename);
                 var tags = names.GroupBy(Extension).ToDictionary(g => GetFileType(g.Key), g =>
                 {
                     var files = g.ToArray();
@@ -87,7 +88,7 @@ namespace zeco.autoapi.MVC
             switch (file.Type)
             {
                 case SourceType.Template:
-                    return string.Format("<script type=\"text/ng-template\" id=\"/{0}\">", file.FullName);
+                    return $"<script type=\"text/ng-template\" id=\"/{file.FullName}\">";
 
                 default:
                     return "";
@@ -122,10 +123,10 @@ namespace zeco.autoapi.MVC
                     return "";
 
                 case SourceType.Javascript:
-                    return string.Format("<script src='/{0}?rnd={1}'></script>", filename, file.Checksum);
+                    return $"<script src='/{filename}?rnd={file.Checksum}'></script>";
 
                 case SourceType.CSS:
-                    return string.Format("<link rel='stylesheet' href='/{0}'/>", filename);
+                    return $"<link rel='stylesheet' href='/{filename}'/>";
 
                 default:
                     throw new NotImplementedException();
@@ -155,7 +156,7 @@ namespace zeco.autoapi.MVC
             if (extension == "css") return SourceType.CSS;
             if (extension == "html") return SourceType.Template;
 
-            throw new NotImplementedException(string.Format("Unknown file {0}", extension));
+            throw new NotImplementedException($"Unknown file {extension}");
         }
 
         private static SourceFile LoadFile(string filename)
@@ -164,7 +165,15 @@ namespace zeco.autoapi.MVC
                 .Replace(".js", ".min.js")
                 .Replace(".css", ".min.css");
 
-            var source =  File.ReadAllText(GetFilePath(minfname) ?? GetFilePath(filename));
+            string source;
+            try
+            {
+                source = File.ReadAllText(GetFilePath(minfname) ?? GetFilePath(filename));
+            }
+            catch
+            {
+                throw new Exception($"Unable to load file : {filename}");
+            }
 
             var checksum = source.MD5();
 
@@ -187,7 +196,7 @@ namespace zeco.autoapi.MVC
                 case SourceType.Javascript:
                     return minifier.MinifyJavaScript(file.Source, new CodeSettings
                     {
-                        PreserveImportantComments = false
+                        PreserveImportantComments = false,
                     });
 
                 case SourceType.CSS:
