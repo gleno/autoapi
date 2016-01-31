@@ -54,7 +54,7 @@ namespace zeco.autoapi.CodeGeneration.Generators
                                     if (itemprops.Contains(name))
                                         continue;
 
-                                    var typename = GetInterfaceName(property.PropertyType);
+                                    var typename = GetInterfaceName(property.PropertyType, attr.Nest);
                                     if (ptype.IsEnum)
                                         typename = ptype.Name;
 

@@ -215,15 +215,21 @@ namespace zeco.autoapi.CodeGeneration
             _builder.AppendLine(prefix + str);
         }
 
-        protected string GetInterfaceName(Type type)
+        protected string GetInterfaceName(Type type, bool nest = false)
         {
             type = Nullable.GetUnderlyingType(type) ?? type;
 
             if (type.IsGenericType)
             {
                 if (type.GetGenericTypeDefinition() == typeof (ICollection<>))
-                    //return GetInterfaceName(type.GetGenericArguments()[0]) + "[]";
-                    return "string[]"; //Only guids
+                    if (nest)
+                    {
+                        return GetInterfaceName(type.GetGenericArguments()[0]) + "[]";
+                    }
+                    else
+                    {   //Only guids
+                        return "string[]"; 
+                    }
                 return "any";
             }
 

@@ -38,7 +38,7 @@ namespace zeco.autoapi
     {
         public bool OwnerCanSet { get; set; }
         public string PropertyName { get; set; }
-        public bool DecodeJson { get; set; }
+        public bool Nest { get; set; }
     }
 
     public abstract class AutoApiUser : IdentityUser<Guid, AutoApiUserLogin, AutoApiUserRole, AutoApiUserClaim>, IIdentifiable

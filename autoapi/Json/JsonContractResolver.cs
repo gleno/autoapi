@@ -55,7 +55,7 @@ namespace zeco.autoapi.Json
             property.ShouldSerialize = instance => true;
 
             var prop = member as PropertyInfo;
-            if (prop != null && prop.PropertyType.IsCollection())
+            if (prop != null && prop.PropertyType.IsCollection() && !attr.Nest)
             {
                 property.PropertyType = typeof(Guid[]);
                 property.ValueProvider = new ItemKeyProvider(prop);
