@@ -48,16 +48,18 @@ namespace zeco.autoapi
                 if (_user == null)
                 {
                     var claimsId = User.Identity.GetUserId();
-                    var userId = new TUser().MakeIdFromUniqueIdentifier(claimsId);
-
-                    _user = UserManager.FindById(userId);
+                    if (claimsId != null)
+                    {
+                        var userId = new TUser().MakeIdFromUniqueIdentifier(claimsId);
+                        _user = UserManager.FindById(userId);
+                    }
                 }
                 return _user;
             }
         }
     }
 
-    [Authorize]
+    //[Authorize]
     public abstract class AutoApiController<T, TContext, TUser> : ApiControllerBase<TContext, TUser> 
         where T : class, IIdentifiable, new() where TUser : AutoApiUser, new() where TContext : AutoApiDbContext<TUser>
     {

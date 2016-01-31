@@ -76,7 +76,7 @@ namespace zeco.autoapi.CodeGeneration
                 var cname = _baseControllerType.Name;
                 cname = cname.Substring(0, cname.Length - 2);
 
-                sb.AppendLine(string.Format("public class {0}Controller: {1}<{2}>  {{}}", name, cname, type.FullName));
+                sb.AppendLine($"public class {name}Controller: {cname}<{type.FullName}>  {{}}");
             }
 
             sb.AppendLine("}");
