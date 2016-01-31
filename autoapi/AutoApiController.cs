@@ -75,11 +75,14 @@ namespace zeco.autoapi
         [HttpGet]
         public virtual IQueryable<T> Get()
         {
-            if (Self == null)
-                return (new T[0]).AsQueryable();
+            var anonymousRead = typeof (T).HasAttributeWithProperty<AutoApiAttribute>(a => a.AnyUserCanRead);
+            var isAdmin = Self != null && Self.IsAdmin;
 
-            if (Self.IsAdmin || typeof (T).HasAttributeWithProperty<AutoApiAttribute>(a => a.AnyUserCanRead))
+            if (isAdmin || anonymousRead)
                 return Context.Query<T>();
+
+            if (Self == null)
+                return new T[0].AsQueryable();
 
             if (IsRootedIn<TUser>())
                 return FilterBy(Self, u => u.Id);
