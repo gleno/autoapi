@@ -77,16 +77,6 @@ namespace autoapi
                 return AdminCache.GetOrAdd(Id, id => Roles.Any(r => r.AutoApiRole.Name == AdminRole));
             }
         }
-
-        public virtual Guid MakeIdFromUniqueIdentifier(string identifier)
-        {
-            return Guid.Parse(identifier);
-        }
-
-        public virtual string MakeUserNameFromUniqueIdentifier(string identifier)
-        {
-            return identifier;
-        }
     }
 
     public abstract class Item : IIdentifiable

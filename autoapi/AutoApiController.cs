@@ -47,12 +47,10 @@ namespace autoapi
             {
                 if (_user == null)
                 {
-                    var claimsId = User.Identity.GetUserId();
-                    if (claimsId != null)
-                    {
-                        var userId = new TUser().MakeIdFromUniqueIdentifier(claimsId);
+                    var userIdText = User.Identity.GetUserId();
+                    Guid userId;
+                    if (userIdText != null && Guid.TryParse(userIdText, out userId))
                         _user = UserManager.FindById(userId);
-                    }
                 }
                 return _user;
             }
