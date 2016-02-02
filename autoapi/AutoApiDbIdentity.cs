@@ -8,7 +8,7 @@ using System.Reflection;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
-namespace zeco.autoapi
+namespace autoapi
 {
     public class AutoApiUserLogin : IdentityUserLogin<Guid>
     {
@@ -47,8 +47,7 @@ namespace zeco.autoapi
 
     public class AutoApiUserManager<TUser> : UserManager<TUser, Guid> where TUser : AutoApiUser
     {
-        public AutoApiUserManager(AutoApiUserStore<TUser> store)
-            : base(store)
+        public AutoApiUserManager(IUserStore<TUser, Guid> store): base(store)
         {
         }
     }

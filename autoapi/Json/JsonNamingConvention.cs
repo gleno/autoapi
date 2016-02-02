@@ -1,6 +1,6 @@
-﻿using zeco.autoapi.Extensions;
+﻿using autoapi.Extensions;
 
-namespace zeco.autoapi.Json
+namespace autoapi.Json
 {
     internal class JsonNamingConvention
     {

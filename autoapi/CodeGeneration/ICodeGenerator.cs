@@ -1,4 +1,4 @@
-﻿namespace zeco.autoapi.CodeGeneration
+﻿namespace autoapi.CodeGeneration
 {
     interface ICodeGenerator
     {

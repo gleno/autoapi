@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using autoapi.Extensions;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using zeco.autoapi.Extensions;
 
-namespace zeco.autoapi.Json
+namespace autoapi.Json
 {
     internal class JsonContractResolver : DefaultContractResolver
     {

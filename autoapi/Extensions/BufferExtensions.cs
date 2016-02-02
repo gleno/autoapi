@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace zeco.autoapi.Extensions
+namespace autoapi.Extensions
 {
     public static class BufferExtensions
     {

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.IO.Compression;
 
-namespace zeco.autoapi.Services
+namespace autoapi.Services
 {
     public class NullCompressionService : ICompressionService
     {

@@ -1,7 +1,7 @@
 ﻿using System;
-using zeco.autoapi.Extensions;
+using autoapi.Extensions;
 
-namespace zeco.autoapi.Providers
+namespace autoapi.Providers
 {
 
     public class SecureUniqueAccessTokenProvider : IUniqueAccessTokenProvider

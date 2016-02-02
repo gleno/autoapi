@@ -1,6 +1,6 @@
 using System;
 
-namespace zeco.autoapi.Providers
+namespace autoapi.Providers
 {
     public class ConcurrentGuidProvider : IGuidProvider
     {

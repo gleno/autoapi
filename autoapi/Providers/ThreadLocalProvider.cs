@@ -1,17 +1,14 @@
 using System;
 using System.Threading;
 
-namespace zeco.autoapi.Providers
+namespace autoapi.Providers
 {
     public abstract class ThreadLocalProvider<T> : IDisposable
     {
         private readonly ThreadLocal<T> _local;
         private readonly object _lock = new object();
 
-        public T LocalInstance
-        {
-            get { return _local.Value; }
-        }
+        public T LocalInstance => _local.Value;
 
         protected ThreadLocalProvider()
         {
@@ -39,8 +36,8 @@ namespace zeco.autoapi.Providers
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing && _local != null)
-                _local.Dispose();
+            if (disposing)
+                _local?.Dispose();
         }
     }
 }

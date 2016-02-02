@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Reflection;
 using System.Web.Http;
+using autoapi.CodeGeneration;
 using Castle.MicroKernel.Registration;
-using zeco.autoapi.CodeGeneration;
 
-namespace zeco.autoapi.DependencyInjection
+namespace autoapi.DependencyInjection
 {
     internal class InjectingControllerFactory<TContext, TUser> : InjectingControllerFactoryBase
         where TUser : AutoApiUser 
@@ -23,7 +23,7 @@ namespace zeco.autoapi.DependencyInjection
         {
             base.Install(installers);
 
-            _container.Register(
+            Container.Register(
 
                 Component.For<TContext>().LifestylePerWebRequest(),
 
@@ -45,7 +45,7 @@ namespace zeco.autoapi.DependencyInjection
                 );
 
             if (AutoApiAssembly != null)
-                _container.Register(Classes.FromAssembly(AutoApiAssembly).BasedOn<ApiController>().LifestylePerWebRequest());
+                Container.Register(Classes.FromAssembly(AutoApiAssembly).BasedOn<ApiController>().LifestylePerWebRequest());
 
             return this;
         }

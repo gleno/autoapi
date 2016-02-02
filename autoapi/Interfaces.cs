@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace zeco.autoapi
+namespace autoapi
 {
     public interface IIdentifiable
     {

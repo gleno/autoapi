@@ -1,15 +1,12 @@
 using System;
 
-namespace zeco.autoapi.Providers
+namespace autoapi.Providers
 {
     public class ThreadLocalRandomProvider : ThreadLocalProvider<Random>
     {
-        private static readonly ThreadLocalRandomProvider _provider = new ThreadLocalRandomProvider();
+        private static readonly ThreadLocalRandomProvider Provider = new ThreadLocalRandomProvider();
 
-        public static Random Instance
-        {
-            get { return _provider.LocalInstance; }
-        }
+        public static Random Instance => Provider.LocalInstance;
 
         private readonly Random _random = new Random();
 

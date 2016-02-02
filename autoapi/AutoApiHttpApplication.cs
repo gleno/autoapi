@@ -1,12 +1,12 @@
 using System.Web.Http;
+using autoapi.DependencyInjection;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
-using zeco.autoapi.DependencyInjection;
-using JsonContractResolver = zeco.autoapi.Json.JsonContractResolver;
+using JsonContractResolver = autoapi.Json.JsonContractResolver;
 
-namespace zeco.autoapi
+namespace autoapi
 {
     public abstract class AutoApiHttpApplication<TContext, TUser, TBaseController> : AutoHttpApplication 
         where TUser : AutoApiUser, new() where TContext : AutoApiDbContext<TUser>

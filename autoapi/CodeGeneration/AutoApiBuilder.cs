@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using autoapi.Extensions;
 using Microsoft.CSharp;
-using zeco.autoapi.Extensions;
 
-namespace zeco.autoapi.CodeGeneration
+namespace autoapi.CodeGeneration
 {
     class AutoApiBuilder
     {

@@ -5,10 +5,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using autoapi.Json;
 using Newtonsoft.Json;
-using zeco.autoapi.Json;
 
-namespace zeco.autoapi.Extensions
+namespace autoapi.Extensions
 {
     public static class ObjectExtensions
     {

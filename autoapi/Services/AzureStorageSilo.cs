@@ -1,13 +1,13 @@
-﻿using System.Net;
+﻿using System;
+using System.IO;
+using System.Net;
+using System.Threading.Tasks;
+using autoapi.Extensions;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using zeco.autoapi.Extensions;
 
-namespace zeco.autoapi.Services
+namespace autoapi.Services
 {
     public class AzureBlobStorageSilo : ISilo
     {

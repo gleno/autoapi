@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using zeco.autoapi.Extensions;
+using autoapi.Extensions;
 
-namespace zeco.autoapi.CodeGeneration
+namespace autoapi.CodeGeneration
 {
     abstract class TypeScriptCodeGenerator : ICodeGenerator
     {
-        int _depth;
-        StringBuilder _builder;
-        bool _backtraceNext;
+        private int _depth;
+        private StringBuilder _builder;
+        private bool _backtraceNext;
         private Assembly _assembly;
 
         public abstract string Filename { get; }
@@ -156,7 +156,7 @@ namespace zeco.autoapi.CodeGeneration
 
         protected void ElseIf(string condition, Action action)
         {
-            Scope(string.Format("else if({0})", condition), action);
+            Scope($"else if({condition})", action);
         }
 
         protected void ElseIf(string condition, string action)
@@ -166,7 +166,7 @@ namespace zeco.autoapi.CodeGeneration
         
         protected void Else(Action action)
         {
-            Scope(string.Format("else"), action);
+            Scope("else", action);
         }
 
         protected void Else(string action)

@@ -4,10 +4,10 @@ using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using zeco.autoapi.CodeGeneration;
-using zeco.autoapi.Extensions;
+using autoapi.CodeGeneration;
+using autoapi.Extensions;
 
-namespace zeco.autoapi
+namespace autoapi
 {
     static class GeneratorEntryPoint
     {
@@ -63,7 +63,7 @@ namespace zeco.autoapi
             foreach (var type in generators)
             {
                 var generator = (ICodeGenerator) Activator.CreateInstance(type);
-                var filename = Path.Combine(directory, string.Format("{0}.{1}", moduleName, generator.Filename));
+                var filename = Path.Combine(directory, $"{moduleName}.{generator.Filename}");
                 var source = generator.Generate<TContext, TUser>(moduleName);
                 File.WriteAllText(filename, source);
             }
@@ -118,10 +118,10 @@ namespace zeco.autoapi
             }
         }
 
-        private static bool ValidateArguments(string[] args, out string assemblyPath, out string directory)
+        private static bool ValidateArguments(IReadOnlyList<string> args, out string assemblyPath, out string directory)
         {
             directory = assemblyPath = null;
-            if (args.Length != 2) return false;
+            if (args.Count != 2) return false;
 
             assemblyPath = args[0];
             if (!IsAssemblyPath(assemblyPath)) Console.WriteLine("{0} is not an assembly.", assemblyPath);

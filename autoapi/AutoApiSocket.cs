@@ -5,12 +5,12 @@ using System.Linq;
 using System.Reflection;
 using System.Security;
 using System.Threading.Tasks;
+using autoapi.Extensions;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using zeco.autoapi.Extensions;
 
-namespace zeco.autoapi
+namespace autoapi
 {
     [Authorize]
     public class AutoApiSocket : PersistentConnection
@@ -27,14 +27,14 @@ namespace zeco.autoapi
 
         #endregion
 
-        public Dictionary<string, ApiControllerBase> _controllers
+        public Dictionary<string, ApiControllerBase> Controllers
             = new Dictionary<string, ApiControllerBase>();
         
         private ApiControllerBase GetController(SocketPacket packet)
         {
-            if (!_controllers.ContainsKey(packet.Type))
+            if (!Controllers.ContainsKey(packet.Type))
                 Initialize(packet.Type);
-            return _controllers[packet.Type];
+            return Controllers[packet.Type];
         }
 
         private object GetPayload(ApiControllerBase controller, MethodInfo method, SocketPacket packet, bool hasParam)
@@ -58,7 +58,7 @@ namespace zeco.autoapi
             var kernel = AutoHttpApplication.Instance.Factory.Kernel;
             var type = Util.GetApiControllerFor(typename);
             var controller = (ApiControllerBase) kernel.Resolve(type);
-            _controllers[typename] = controller;
+            Controllers[typename] = controller;
         }
 
         private static MethodInfo GetMethod(ApiControllerBase controller, SocketPacket packet, bool hasParam)
@@ -71,7 +71,7 @@ namespace zeco.autoapi
                 .SingleOrDefault(m => m.GetParameters().Length == (hasParam ? 1 : 0));
 
             if (method == null)
-                throw new SecurityException(string.Format("Can't call {0}", packet.Method));
+                throw new SecurityException($"Can't call {packet.Method}");
 
             return method;
         }

@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using System.Web.Http;
 using System.Web.Http.Filters;
-using zeco.autoapi.Extensions;
+using autoapi.Extensions;
 
-namespace zeco.autoapi.MVC.Fitlers
+namespace autoapi.MVC.Fitlers
 {
     public class DebugExceptionHandlerAttribute : ExceptionFilterAttribute
     {

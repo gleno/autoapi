@@ -3,10 +3,10 @@ using System.Collections.Concurrent;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using autoapi.Providers;
 using Microsoft.AspNet.Identity.EntityFramework;
-using zeco.autoapi.Providers;
 
-namespace zeco.autoapi
+namespace autoapi
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class AutoApiAttribute : Attribute
@@ -43,7 +43,7 @@ namespace zeco.autoapi
 
     public abstract class AutoApiUser : IdentityUser<Guid, AutoApiUserLogin, AutoApiUserRole, AutoApiUserClaim>, IIdentifiable
     {
-        private static readonly ConcurrentDictionary<Guid, bool> _adminCache 
+        private static readonly ConcurrentDictionary<Guid, bool> AdminCache 
             = new ConcurrentDictionary<Guid, bool>();
 
         public const string
@@ -74,7 +74,7 @@ namespace zeco.autoapi
         {
             get
             {
-                return _adminCache.GetOrAdd(Id, id => Roles.Any(r => r.AutoApiRole.Name == AdminRole));
+                return AdminCache.GetOrAdd(Id, id => Roles.Any(r => r.AutoApiRole.Name == AdminRole));
             }
         }
 
@@ -118,13 +118,7 @@ namespace zeco.autoapi
 
         [NotMapped]
         [AutoProperty(PropertyName = TypeIdentityShortName)]
-        public virtual string TypeIdentity
-        {
-            get
-            {
-                return GetTypeIdentity(GetType());
-            }
-        }
+        public virtual string TypeIdentity => GetTypeIdentity(GetType());
 
         public static string GetTypeIdentity(Type type)
         {

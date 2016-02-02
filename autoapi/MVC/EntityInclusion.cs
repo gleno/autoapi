@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Web;
 using System.Web.Mvc;
-using zeco.autoapi.Extensions;
-using zeco.autoapi.Json;
+using autoapi.Extensions;
+using autoapi.Json;
 
-namespace zeco.autoapi.MVC
+namespace autoapi.MVC
 {
     public static class EntityInclusion
     {
@@ -12,7 +12,7 @@ namespace zeco.autoapi.MVC
         {
             var items = any as IEnumerable<IIdentifiable>;
             var json = items != null ? new AutoApiEntityCollection {items}.Serialize() : any.ToSafeJson();
-            var html = string.Format("<script type='{0}' id='{1}'>", type, id) + json + "</script>";
+            var html = $"<script type='{type}' id='{id}'>" + json + "</script>";
             return new HtmlString(html);
         }
     }

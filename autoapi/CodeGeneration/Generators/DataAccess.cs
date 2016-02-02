@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace zeco.autoapi.CodeGeneration.Generators
+namespace autoapi.CodeGeneration.Generators
 {
     class DataAccess : TypeScriptCodeGenerator
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Web.Mvc;
 
-namespace zeco.autoapi.MVC
+namespace autoapi.MVC
 {
     public static class RazorUtilities
     {
@@ -9,7 +9,7 @@ namespace zeco.autoapi.MVC
         public class Tag : IDisposable
         {
             private readonly Action _action;
-            bool _disposed;
+            private bool _disposed;
 
             public Tag(Action action)
             {
@@ -23,17 +23,15 @@ namespace zeco.autoapi.MVC
 
             protected virtual void Dispose(bool disposing)
             {
-                if (!_disposed)
-                {
-                    _disposed = true;
-                    _action();
-                }
+                if (_disposed) return;
+                _disposed = true;
+                _action();
             }
         }
 
         public static string Iff(this HtmlHelper htmlHelper, bool condition, string output)
         {
-            return condition ? output : String.Empty;
+            return condition ? output : string.Empty;
         }
 
         public static Tag InlineTemplate(this HtmlHelper htmlHelper, string name, string prefix = "/ng/")

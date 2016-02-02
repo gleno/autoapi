@@ -6,11 +6,11 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Reflection;
 using System.Web.Http;
+using autoapi.Extensions;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json.Linq;
-using zeco.autoapi.Extensions;
 
-namespace zeco.autoapi
+namespace autoapi
 {
 
     public abstract class ApiControllerBase : ApiController
@@ -74,6 +74,7 @@ namespace zeco.autoapi
             return Get().SingleOrDefault(item => item.Id == id);
         }
 
+        //Read All
         [HttpGet]
         public virtual IQueryable<T> Get()
         {
@@ -92,6 +93,7 @@ namespace zeco.autoapi
             return new T[0].AsQueryable();
         }
 
+        //Patch = Get a bunch of Ids (Read Many)
         [HttpPatch]
         public virtual IQueryable<T> Patch(dynamic payload)
         {
@@ -206,10 +208,8 @@ namespace zeco.autoapi
 
             var source = GetSourceType(typeof(T));
 
-            if (typeof(T).HasAttributeWithProperty<AutoApiAttribute>(a => a.AnyUserCanAdd))
-            {
+            if (typeof (T).HasAttributeWithProperty<AutoApiAttribute>(a => a.AnyUserCanAdd))
                 return true;
-            }
 
             if (source != null && sourceId.HasValue) //T has a source object
             {
@@ -379,7 +379,7 @@ namespace zeco.autoapi
         private Type GetSourceType(Type type)
         {
             var source = type.GetProperty(SourcePropertyName);
-            return source == null ? null : source.PropertyType;
+            return source?.PropertyType;
         }
 
         #endregion

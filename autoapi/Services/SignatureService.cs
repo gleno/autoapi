@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Security;
 using System.Security.Cryptography;
-using zeco.autoapi.Extensions;
+using autoapi.Extensions;
 
-namespace zeco.autoapi.Services
+namespace autoapi.Services
 {
     public class ShaSignatureService : ISignatureService
     {

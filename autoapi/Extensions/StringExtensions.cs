@@ -4,11 +4,11 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace zeco.autoapi.Extensions
+namespace autoapi.Extensions
 {
     public static class StringExtensions
     {
-        private static readonly PluralizationService _pluralizationService = 
+        private static readonly PluralizationService PluralizationService = 
             PluralizationService.CreateService(CultureInfo.GetCultureInfo("en-us"));
 
 
@@ -30,7 +30,7 @@ namespace zeco.autoapi.Extensions
 
         public static string Pluralize(this string str)
         {
-            return _pluralizationService.Pluralize(str);
+            return PluralizationService.Pluralize(str);
         }
 
         public static Guid AsGuid(this string encoded)
@@ -40,7 +40,7 @@ namespace zeco.autoapi.Extensions
             return new Guid(buffer);
         }
 
-        public static string MD5(this string input, Encoding encoding = null)
+        public static string Md5(this string input, Encoding encoding = null)
         {
             encoding = encoding ?? Encoding.UTF8;
             var buffer = input.Serialize(encoding);

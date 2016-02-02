@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
-using zeco.autoapi.Extensions;
+using autoapi.Extensions;
 
-namespace zeco.autoapi.CodeGeneration.Generators
+namespace autoapi.CodeGeneration.Generators
 {
     class DataGenerator : TypeScriptCodeGenerator
     {

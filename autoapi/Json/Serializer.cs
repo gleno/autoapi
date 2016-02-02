@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using zeco.autoapi.Extensions;
+using autoapi.Extensions;
 
-namespace zeco.autoapi.Json
+namespace autoapi.Json
 {
     public class AutoApiEntityCollection : IEnumerable<IIdentifiable>
     {

@@ -4,26 +4,23 @@ using System.Web.Http.Controllers;
 using System.Web.Http.Dispatcher;
 using System.Web.Mvc;
 using System.Web.Routing;
+using autoapi.Providers;
 using Castle.MicroKernel;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
-using zeco.autoapi.Providers;
 
-namespace zeco.autoapi.DependencyInjection
+namespace autoapi.DependencyInjection
 {
     internal class InjectingControllerFactoryBase : DefaultControllerFactory, IDisposable, IHttpControllerActivator
     {
 
-        protected readonly WindsorContainer _container;
+        protected readonly WindsorContainer Container;
 
-        public IKernel Kernel
-        {
-            get { return _container.Kernel; }
-        }
+        public IKernel Kernel => Container.Kernel;
 
         public IHttpController Create(HttpRequestMessage request, HttpControllerDescriptor controllerDescriptor, Type controllerType)
         {
-            return (IHttpController)_container.Resolve(controllerType);
+            return (IHttpController)Container.Resolve(controllerType);
         }
 
         protected override IController GetControllerInstance(RequestContext requestContext, Type controllerType)
@@ -35,7 +32,7 @@ namespace zeco.autoapi.DependencyInjection
 
         public void Dispose()
         {
-            _container.Dispose();
+            Container.Dispose();
         }
 
         public override void ReleaseController(IController controller)
@@ -45,13 +42,13 @@ namespace zeco.autoapi.DependencyInjection
 
         public InjectingControllerFactoryBase()
         {
-            _container = new WindsorContainer();
+            Container = new WindsorContainer();
         }
 
         public virtual InjectingControllerFactoryBase Install(params WindsorInstaller[] installers)
         {
 
-            _container.Register(
+            Container.Register(
 
                 Component.For<IUniqueAccessTokenProvider>().ImplementedBy<SecureUniqueAccessTokenProvider>(),
 
@@ -60,7 +57,7 @@ namespace zeco.autoapi.DependencyInjection
                 );
 
             foreach (var installer in installers)
-                _container.Install(installer);
+                Container.Install(installer);
 
             return this;
         }

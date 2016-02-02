@@ -10,6 +10,9 @@ using System.Web.Http;
 using System.Web.Http.Dispatcher;
 using System.Web.Mvc;
 using System.Web.Routing;
+using autoapi.DependencyInjection;
+using autoapi.Extensions;
+using autoapi.MVC.Fitlers;
 using Castle.Core.Internal;
 using Castle.MicroKernel;
 using Castle.MicroKernel.Registration;
@@ -17,15 +20,12 @@ using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Microsoft.AspNet.SignalR;
 using Owin;
-using zeco.autoapi.DependencyInjection;
-using zeco.autoapi.Extensions;
-using zeco.autoapi.MVC.Fitlers;
 using HttpGetAttribute = System.Web.Mvc.HttpGetAttribute;
 using HttpPatchAttribute = System.Web.Mvc.HttpPatchAttribute;
 using HttpPostAttribute = System.Web.Mvc.HttpPostAttribute;
 using HttpPutAttribute = System.Web.Mvc.HttpPutAttribute;
 
-namespace zeco.autoapi
+namespace autoapi
 {
 
     public abstract class AutoHttpApplication : HttpApplication

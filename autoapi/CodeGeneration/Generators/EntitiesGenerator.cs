@@ -1,4 +1,4 @@
-namespace zeco.autoapi.CodeGeneration.Generators
+namespace autoapi.CodeGeneration.Generators
 {
     class EntitiesGenerator : TypeScriptCodeGenerator
     {

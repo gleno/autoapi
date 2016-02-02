@@ -6,16 +6,16 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
+using autoapi.Extensions;
 using Microsoft.Ajax.Utilities;
-using zeco.autoapi.Extensions;
 
-namespace zeco.autoapi.MVC
+namespace autoapi.MVC
 {
     public static class FileInclusion
     {
         private enum SourceType
         {
-            Javascript, CSS, Template
+            Javascript, Css, Template
         }
 
         private class SourceFile
@@ -26,7 +26,7 @@ namespace zeco.autoapi.MVC
             public string Checksum { get; set; }
         }
 
-        private static readonly ConcurrentDictionary<string, string> _cache
+        private static readonly ConcurrentDictionary<string, string> Cache
             = new ConcurrentDictionary<string, string>();
 
         public static IHtmlString InlineFile(this HtmlHelper helper, string filename)
@@ -41,7 +41,7 @@ namespace zeco.autoapi.MVC
                 return new HtmlString(tags);
             }
 
-            if (!_cache.ContainsKey(filename))
+            if (!Cache.ContainsKey(filename))
             {
                 var tags = names.GroupBy(Extension).ToDictionary(g => GetFileType(g.Key), g =>
                 {
@@ -64,10 +64,10 @@ namespace zeco.autoapi.MVC
                 foreach (var tag in tags)
                     output += WrapSource(tag.Key, tag.Value);
 
-                _cache[filename] = output;
+                Cache[filename] = output;
             }
 
-            return new HtmlString(_cache[filename]);
+            return new HtmlString(Cache[filename]);
 
         }
 
@@ -102,7 +102,7 @@ namespace zeco.autoapi.MVC
                 case SourceType.Javascript:
                     return ";";
 
-                case SourceType.CSS:
+                case SourceType.Css:
                     return " ";
 
                 case SourceType.Template:
@@ -125,7 +125,7 @@ namespace zeco.autoapi.MVC
                 case SourceType.Javascript:
                     return $"<script src='/{filename}?rnd={file.Checksum}'></script>";
 
-                case SourceType.CSS:
+                case SourceType.Css:
                     return $"<link rel='stylesheet' href='/{filename}'/>";
 
                 default:
@@ -140,7 +140,7 @@ namespace zeco.autoapi.MVC
                 case SourceType.Javascript:
                     return "<script>//<![CDATA[\n" + data + "\n//]]></script>";
 
-                case SourceType.CSS:
+                case SourceType.Css:
                     return "<style>" + data + "</style>";
 
                 case SourceType.Template:
@@ -153,7 +153,7 @@ namespace zeco.autoapi.MVC
         private static SourceType GetFileType(string extension)
         {
             if (extension == "js") return SourceType.Javascript;
-            if (extension == "css") return SourceType.CSS;
+            if (extension == "css") return SourceType.Css;
             if (extension == "html") return SourceType.Template;
 
             throw new NotImplementedException($"Unknown file {extension}");
@@ -175,7 +175,7 @@ namespace zeco.autoapi.MVC
                 throw new Exception($"Unable to load file : {filename}");
             }
 
-            var checksum = source.MD5();
+            var checksum = source.Md5();
 
             return new SourceFile
             {
@@ -199,7 +199,7 @@ namespace zeco.autoapi.MVC
                         PreserveImportantComments = false,
                     });
 
-                case SourceType.CSS:
+                case SourceType.Css:
                     return minifier.MinifyStyleSheet(file.Source, new CssSettings
                     {
                         CommentMode = CssComment.None
