@@ -156,7 +156,7 @@ namespace autoapi
         [Index]
         public Guid SourceId { get; set; }
 
-        [ForeignKey("SourceId")]
+        [ForeignKey(nameof(SourceId))]
         public virtual TSource Source { get; set; }
     }
 
@@ -166,7 +166,7 @@ namespace autoapi
         [AutoProperty]
         public Guid DestinationId { get; set; }
 
-        [ForeignKey("DestinationId")]
+        [ForeignKey(nameof(DestinationId))]
         public virtual TDestination Destination { get; set; }
     }
 }
