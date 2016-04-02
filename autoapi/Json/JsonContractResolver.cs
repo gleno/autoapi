@@ -9,8 +9,11 @@ using Newtonsoft.Json.Serialization;
 
 namespace autoapi.Json
 {
-    internal class JsonContractResolver : DefaultContractResolver
+    public class JsonContractResolver : DefaultContractResolver
     {
+
+        public static bool AlwaysUseNativeFormatting { get; set; } = false;
+
         private class ItemKeyProvider : IValueProvider
         {
             public PropertyInfo Property { get; set; }
@@ -49,6 +52,10 @@ namespace autoapi.Json
             {
                 if (isAutoType || isUserType) 
                     property.ShouldSerialize = instance => false;
+
+                if (AlwaysUseNativeFormatting)
+                    property.PropertyName = property.UnderlyingName.Decapitalize();
+
                 return property;
             }
 
