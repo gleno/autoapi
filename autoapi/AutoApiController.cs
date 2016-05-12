@@ -248,12 +248,13 @@ namespace autoapi
             if (Self.IsAdmin) 
                 return true;
 
-            var attr = prop.GetCustomAttribute<AutoPropertyAttribute>();
             var aaa = prop.DeclaringType.GetCustomAttributes<AutoApiAttribute>().FirstOrDefault();
-            if (aaa != null && aaa.OwnerHasFullControll)
-                return true;
+            if (aaa == null || !aaa.OwnerCanEdit)
+                return false;
 
-            if(attr != null) if (attr.OwnerCanSet) return true;
+            var attr = prop.GetCustomAttribute<AutoPropertyAttribute>();
+            if (attr != null)
+                if (attr.OwnerCanSet) return true;
 
             return false;
         }

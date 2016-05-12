@@ -239,7 +239,7 @@ namespace autoapi.CodeGeneration
                 return "string";
             if (type == typeof(string))
                 return "string";
-            if (type == typeof(int) || type == typeof(double))
+            if (type == typeof(int) || type == typeof(double) || type == typeof(decimal))
                 return "number";
             if (type == typeof(DateTime))
                 return "Date";

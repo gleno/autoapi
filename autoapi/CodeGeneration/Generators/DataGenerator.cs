@@ -32,7 +32,7 @@ namespace autoapi.CodeGeneration.Generators
                                 itemprops.Add(name);
                             }
                         }
-                        Statement($"{"sourceId?"}: {"string"};");
+                        Statement("sourceId?: string;");
 
                     });
 
