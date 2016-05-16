@@ -46,15 +46,15 @@ namespace autoapi
         private void AddRoute<TController>(string action, string url = null, bool idparam = false)
             where TController : Controller
         {
-            if (url.IsNullOrEmpty())
-            {
-                if (Instance.IsDefaultActionSet)
-                {
-                    const string error = "More than one default action in configuration.";
-                    throw new DuplicateNameException(error);
-                }
-                Instance.IsDefaultActionSet = true;
-            }
+            //if (url.IsNullOrEmpty())
+            //{
+            //    if (Instance.IsDefaultActionSet)
+            //    {
+            //        const string error = "More than one default action in configuration.";
+            //        throw new DuplicateNameException(error);
+            //    }
+            //    Instance.IsDefaultActionSet = true;
+            //}
 
             var controllerType = typeof (TController);
             var controllerName = controllerType.Name;
@@ -63,7 +63,7 @@ namespace autoapi
 
             var controller = GetControllerName<TController>();
 
-            var routeName = string.Format("{0}+{1}+{2}", controllerName, action, url);
+            var routeName = $"{controllerName}+{action}+{url}";
             var parameters = idparam ? new {controller, action, id = UrlParameter.Optional} : (object) new {controller, action};
 
 
