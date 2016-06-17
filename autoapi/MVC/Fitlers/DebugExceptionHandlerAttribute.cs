@@ -14,19 +14,16 @@ namespace autoapi.MVC.Fitlers
                 if (Debugger.IsAttached)
                     Debugger.Break();
             }
-            else
+            else if (this.IsDebug())
             {
-                if (this.IsDebug())
-                {
-                    var innermost = context.Exception;
-                    while (innermost.InnerException != null)
-                        innermost = innermost.InnerException;
+                var innermost = context.Exception;
+                while (innermost.InnerException != null)
+                    innermost = innermost.InnerException;
 
-                    if (Debugger.IsAttached)
-                        Debugger.Break();
+                if (Debugger.IsAttached)
+                    Debugger.Break();
 
-                    throw innermost;
-                }
+                throw innermost;
             }
         }
     }
